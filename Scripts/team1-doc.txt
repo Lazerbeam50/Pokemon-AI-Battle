@@ -1,0 +1,1 @@
+bastiodon||leftovers|0|return,raindance,toxic,substitute|impish|252,4,252,0,0,0||||50|]starly||choiceband|0|bravebird,doubleedge,uturn,steelwing|adamant|248,252,0,0,8,0||||50|]pichu||focussash|0|fakeout,grassknot,thunderbolt,nastyplot|mild|252,4,0,252,0,0||||50|]floatzel||lifeorb|0|icepunch,quickattack,crunch,waterfall|adamant|0,252,0,0,4,252||||50|
