@@ -1,1 +1,26 @@
+Stage 1
+=
+
 Main menu > Free battle > TEAM PREVIEW > BATTLE
+
+- Start straight into team preview
+- Load teams from SQL
+- Display UI
+- Opponent picks pokemon
+	- For now, they pick at random.
+
+Data structure
+=
+
+Characters
+-
+Contains character names (e.g. Red, Brock) and IDs as a PK. The player's ID is 0.
+
+Teams
+-
+Contains IDs (PK), tags (e.g. Trick room, Hyper Offense) and keys for pokemon. Links to characters.
+	- Tags should probably be a seperate table
+
+Pokemon
+-
+Contains all the information available on a smogon team export. Has IDs. Joins onto teams.
