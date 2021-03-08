@@ -24,3 +24,7 @@ Contains IDs (PK), tags (e.g. Trick room, Hyper Offense) and keys for pokemon. L
 Pokemon
 -
 Contains all the information available on a smogon team export. Has IDs. Joins onto teams.
+
+teampreview.py
+=
+For now, load the player and opponent's teams from SQL.

@@ -7,6 +7,7 @@ import pygame.locals as pyLocals
 from sys import exc_info  # needed for error reporting
 import traceback  # needed for error reporting
 
+import teampreview
 import misc
 
 
@@ -16,6 +17,7 @@ class Game:
 
         self.values = misc.ValueHolder()
         self.values.settings = misc.GameSettings()
+        self.values.teamPreviewManager = teampreview.TeamPreviewManager()
 
         # Set up the screen
         self.screen = pygame.display.set_mode((self.values.settings.width, self.values.settings.height))
@@ -31,6 +33,15 @@ class Game:
                 for event in events:
                     if event.type == pyLocals.QUIT:
                         self.quit_game()
+
+                if self.values.state == 0:
+                    self.values.teamPreviewManager.update(self.values)
+
+                    self.values.teamPreviewManager.surface.fill(self.values.teamPreviewManager.bgColour)
+
+                    self.values.teamPreviewManager.group.draw(self.values.teamPreviewManager.surface)
+
+                    self.screen.blit(self.values.teamPreviewManager.surface, (0, 0))
 
                 pygame.display.update()
 
