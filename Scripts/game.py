@@ -19,6 +19,9 @@ class Game:
         self.values.settings = misc.GameSettings()
         self.values.teamPreviewManager = teampreview.TeamPreviewManager()
 
+        #Set up fonts
+        self.values.font = pygame.font.Font("Resources/Fonts/PokemonGb-RAeo.ttf", 20)
+
         # Set up the screen
         self.screen = pygame.display.set_mode((self.values.settings.width, self.values.settings.height))
         pygame.display.set_caption("Pokemon AI Battle")
