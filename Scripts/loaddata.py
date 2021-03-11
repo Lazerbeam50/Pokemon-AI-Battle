@@ -26,3 +26,16 @@ def load_team(team):
     cursor.close()
     db.close()
     return data
+
+def load_pokemon_sprites(pokemon):
+    db = sqlite3.connect('Game data/game_data')
+    cursor = db.cursor()
+    cursor.execute('''
+                SELECT *
+                FROM PokemonMedia
+                WHERE species = ?
+                ''',(pokemon,))
+    data = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return data

@@ -75,4 +75,39 @@ class TeamPreviewManager:
                                            390, player1nameImage.get_width(), player1nameImage.get_height())
                                           )
                        )
+
+        genderDiffs = ["venusaur", "girafarig"]
+
+        for i in range(2):
+            if i == 0:
+                x = 560
+                y = 100
+            else:
+                x = 120
+                y = 100
+
+            for pokemon in [values.team1.pokemon, values.team2.pokemon][i]:
+                if pokemon.species in genderDiffs:
+                    species = pokemon.species + "-" + pokemon.gender
+                else:
+                    species = pokemon.species
+
+                data = loaddata.load_pokemon_sprites(species.capitalize())
+                image = pygame.transform.scale(resources.load_pokemon_sprites(data[0][1]), (200, 200))
+                pokemon.frontSprite = sprites.GameSprite(image, (0, 0, 200, 200))
+                image = pygame.transform.scale(resources.load_pokemon_sprites(data[0][2]), (200, 200))
+                pokemon.backSprite = sprites.GameSprite(image, (0, 0, 200, 200))
+                image = pygame.transform.scale(resources.load_pokemon_sprites(data[0][3]), (70, 70))
+                pokemon.miniSprite = sprites.GameSprite(image, (x, y, 70, 70))
+
+                self.group.add(pokemon.miniSprite)
+                if i == 0:
+                    x += 100
+                else:
+                    if x < 290:
+                        x += 90
+                    else:
+                        x = 120
+                        y += 60
+
         #Set up buttons

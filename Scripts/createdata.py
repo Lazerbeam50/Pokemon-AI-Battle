@@ -54,6 +54,17 @@ def set_up_empty_database():
     )
     ''')
 
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS PokemonMedia
+    (
+    species TEXT,
+    frontsprite TEXT,
+    backsprite TEXT,
+    minisprite TEXT,
+    cry TEXT
+    )
+    ''')
+
     db.commit()
     cursor.close()
     db.close()

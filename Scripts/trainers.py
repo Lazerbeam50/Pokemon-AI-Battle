@@ -21,6 +21,7 @@ class Team:
             Pokemon(data[4]),
             Pokemon(data[5])
         ]
+        self.selected = []
 
 class Pokemon:
     def __init__(self, data):
@@ -50,3 +51,9 @@ class Pokemon:
         self.move2 = data[23]
         self.move3 = data[24]
         self.move4 = data[25]
+
+        self.frontSprite = None
+        self.backSprite = None
+        self.miniSprite = None
+
+        
