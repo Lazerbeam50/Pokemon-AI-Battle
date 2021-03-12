@@ -16,20 +16,24 @@ var outputText2 = ".";
     }
 })();
 
+stream.write(`>start {"formatid":"gen4doublescustomgame"}`);
+
 //Load teams
 fsLibrary.readFile('team1-doc.txt', (error, teamText) => {
 	if (error) throw error;
 	var p1Team = teamText.toString();
 	var p1Setup = `>player p1 {"name":"Alice","team":"` + p1Team + `"}`;
 	console.log(p1Setup);
-	var p2Setup = `>player p2 {"name":"Bob","team":"` + p1Team + `"}`;
-	stream.write(`>start {"formatid":"gen4doublescustomgame"}`);
 	stream.write(p1Setup);
-	stream.write(p2Setup);
-
 });
 
-
+fsLibrary.readFile('team2-doc.txt', (error, teamText) => {
+	if (error) throw error;
+	var p2Team = teamText.toString();
+	var p2Setup = `>player p2 {"name":"Bob","team":"` + p2Team + `"}`;
+	console.log(p2Setup);
+	stream.write(p2Setup);
+});
 
 
 const readline = require('readline');

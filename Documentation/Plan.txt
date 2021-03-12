@@ -27,4 +27,7 @@ Contains all the information available on a smogon team export. Has IDs. Joins o
 
 teampreview.py
 =
-For now, load the player and opponent's teams from SQL.
+Load the player and opponent's teams from SQL.
+When the user clicks on one of the their pokemon, the game checks to see if it's in the selected
+list. If so, remove it from the list. If not, add it to the list unless the list is full.
+Clear the order sprites and re-write them.

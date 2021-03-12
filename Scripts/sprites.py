@@ -12,3 +12,9 @@ def centre_x(objectWidth, fitWidth, fitLeft):
     x = int((fitWidth - objectWidth) / 2 + fitLeft)
 
     return x
+
+def is_point_inside_rect(x, y, rect):
+    if (x > rect.left) and (x < rect.right) and (y > rect.top) and (y < rect.bottom):
+        return True
+    else:
+        return False

@@ -20,7 +20,8 @@ class Game:
         self.values.teamPreviewManager = teampreview.TeamPreviewManager()
 
         #Set up fonts
-        self.values.font = pygame.font.Font("Resources/Fonts/PokemonGb-RAeo.ttf", 20)
+        self.values.font20 = pygame.font.Font("Resources/Fonts/PokemonGb-RAeo.ttf", 20)
+        self.values.font16 = pygame.font.Font("Resources/Fonts/PokemonGb-RAeo.ttf", 16)
 
         # Set up the screen
         self.screen = pygame.display.set_mode((self.values.settings.width, self.values.settings.height))
@@ -36,6 +37,8 @@ class Game:
                 for event in events:
                     if event.type == pyLocals.QUIT:
                         self.quit_game()
+                    elif self.values.state == 0:
+                        self.values.teamPreviewManager.update(self.values, event)
 
                 if self.values.state == 0:
                     self.values.teamPreviewManager.update(self.values)
