@@ -7,6 +7,7 @@ import pygame.locals as pyLocals
 from sys import exc_info  # needed for error reporting
 import traceback  # needed for error reporting
 
+import battle
 import teampreview
 import misc
 
@@ -18,6 +19,7 @@ class Game:
         self.values = misc.ValueHolder()
         self.values.settings = misc.GameSettings()
         self.values.teamPreviewManager = teampreview.TeamPreviewManager()
+        self.values.battle = battle.Battle()
 
         #Set up fonts
         self.values.font20 = pygame.font.Font("Resources/Fonts/PokemonGb-RAeo.ttf", 20)
@@ -39,6 +41,8 @@ class Game:
                         self.quit_game()
                     elif self.values.state == 0:
                         self.values.teamPreviewManager.update(self.values, event)
+                    elif self.values.state == 1:
+                        self.values.battle.update(event)
 
                 if self.values.state == 0:
                     self.values.teamPreviewManager.update(self.values)
@@ -48,6 +52,15 @@ class Game:
                     self.values.teamPreviewManager.group.draw(self.values.teamPreviewManager.surface)
 
                     self.screen.blit(self.values.teamPreviewManager.surface, (0, 0))
+
+                elif self.values.state == 1:
+                    self.values.battle.update(self.values)
+
+                    self.values.battle.surface.fill(self.values.battle.bgColour)
+
+                    self.values.battle.group.draw(self.values.battle.surface)
+
+                    self.screen.blit(self.values.battle.surface, (0, 0))
 
                 pygame.display.update()
 

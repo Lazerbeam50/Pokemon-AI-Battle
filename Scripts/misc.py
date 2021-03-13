@@ -16,6 +16,7 @@ class ValueHolder:
     Used to pass variables between functions in a single object
     """
     def __init__(self):
+        self.battle = None
         self.font20 = None
         self.font16 = None
         self.player1 = 0

@@ -2,13 +2,20 @@
 
 """
 
+import pygame
+
 import misc
+import resources
+import sprites
 
 class Trainer:
     def __init__(self, data):
         self.charID = data[0][0]
         self.name = data[0][1]
-        self.sprite = data[0][2]
+        trainerImage = pygame.transform.scale(resources.load_trainer_sprite(data[0][2]), (118, 267))
+        #trainerImage = sprites.get_translucent_sprite(trainerImage)
+        self.sprite = sprites.GameSprite(trainerImage, (0, 0, trainerImage.get_width(), trainerImage.get_height()), 2)
+
 
 class Team:
     def __init__(self, data):

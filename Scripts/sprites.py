@@ -18,3 +18,16 @@ def is_point_inside_rect(x, y, rect):
         return True
     else:
         return False
+
+def get_translucent_sprite(image):
+    for row in range(image.get_height()):
+        for col in range(image.get_width()):
+            image.set_at((col, row), set_alphas(image.get_at((col, row))))
+
+    return image
+
+
+def set_alphas(colour):
+    colour.update(colour.r, colour.g, colour.b, 128)
+
+    return colour

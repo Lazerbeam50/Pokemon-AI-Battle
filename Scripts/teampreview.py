@@ -50,6 +50,8 @@ class TeamPreviewManager:
 
                     if len(values.team1.selected) == 4:
                         self.pack_teams(values)
+                        self.doneSetup = False
+                        values.state = 1
         else:
 
             if self.state == 0:
@@ -94,7 +96,7 @@ class TeamPreviewManager:
                                           (sprites.centre_x(player2nameImage.get_width(),
                                                             self.boxes[0].rect.width,
                                                             self.boxes[0].rect.left),
-                                           40, player1nameImage.get_width(), player1nameImage.get_height())
+                                           40, player2nameImage.get_width(), player2nameImage.get_height())
                                           )
                        )
         summaryImage = values.font20.render("SUMMARY", True, (0, 0, 0))
