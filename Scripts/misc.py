@@ -21,11 +21,12 @@ class ValueHolder:
         self.font16 = None
         self.player1 = 0
         self.player2 = 1
-        self.team1 = 1
-        self.team2 = 0
         self.settings = None
         self.state = 0
+        self.team1 = 1
+        self.team2 = 0
         self.teamPreviewManager = None
+        self.threadRunning = False
 
 def is_blank(x, default):
     """

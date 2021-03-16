@@ -42,7 +42,7 @@ class Game:
                     elif self.values.state == 0:
                         self.values.teamPreviewManager.update(self.values, event)
                     elif self.values.state == 1:
-                        self.values.battle.update(event)
+                        self.values.battle.update(self.values, event)
 
                 if self.values.state == 0:
                     self.values.teamPreviewManager.update(self.values)
@@ -76,5 +76,9 @@ class Game:
                 self.quit_game()  # if reactor has already started, shut down the game
 
     def quit_game(self):
+        if self.values.threadRunning:
+            f = open("quit-doc.txt", "w")
+            f.write("QUIT")
+            f.close()
         pygame.quit()
         raise SystemExit

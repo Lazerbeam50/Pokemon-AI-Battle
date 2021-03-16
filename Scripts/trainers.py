@@ -16,6 +16,8 @@ class Trainer:
         #trainerImage = sprites.get_translucent_sprite(trainerImage)
         self.sprite = sprites.GameSprite(trainerImage, (0, 0, trainerImage.get_width(), trainerImage.get_height()), 2)
 
+        self.request = None
+
 
 class Team:
     def __init__(self, data):
