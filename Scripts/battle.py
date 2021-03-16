@@ -25,7 +25,9 @@ class Battle:
         self.simEvents = []
         self.state = 0
         self.surface = pygame.Surface((1280, 720))
+        self.switchLog = []
         self.text = None
+        self.textMods = {}
         self.thread = None
 
     def update(self, values, event=None):
@@ -52,6 +54,13 @@ class Battle:
             elif self.state == 2:
                 self.handle_switch(values)
 
+            #Abilities
+            elif self.state == 3:
+                self.handle_ability(values)
+
+            #Unboosts
+            elif self.state == 4:
+                self.handle_unboost(values)
 
     def count_frames(self):
         if self.frame == 29:
@@ -62,15 +71,39 @@ class Battle:
         if self.animationFrame > 0:
             self.animationFrame -= 1
 
+    def handle_ability(self, values):
+        if not self.animating and self.animationFrame == 0:
+            line = self.simEvents[0].split("|")
+            if line[3] == 'Intimidate':
+                self.textMods['Intimidate'] = line[2][5:]
+                del self.simEvents[0]
+                self.state = 1
+            elif line[3] == 'Pressure\n':
+                pkmn = line[2][5:]
+                text = f"""{pkmn} is exerting its Pressure!"""
+                self.update_text(values, text)
+        elif self.animating and self.animationFrame == 0:
+            del self.simEvents[0]
+            self.animating = False
+            self.state = 1
+
     def handle_sim_events(self, values):
 
-        text = {'switch': 2}
+        text = {'switch': 2, '-ability': 3, '-unboost': 4}
 
         #Iterate through events queue
         for line in self.simEvents[:]:
+            print(line)
             #If an line is recognised, handle events accordingly
             try:
                 self.state = text[line.split("|")[1]]
+                if self.state == 2:
+                    if line.split("|")[2] in self.switchLog:
+                        self.simEvents.remove(line)
+                        self.state = 1
+                        continue
+                    else:
+                        self.switchLog.append(line.split("|")[2])
                 self.doneSetup = False
                 break
             except KeyError:
@@ -88,13 +121,8 @@ class Battle:
                 player = values.player2.name
             pkmn = line[3].split(',')[0]
             text = f'{player} sent out {pkmn}!'
-            textImage = values.font20.render(text, True, (0, 0, 0))
-            if self.text != None:
-                self.text.kill()
-            self.text = sprites.GameSprite(textImage, (165, 400, textImage.get_width(), textImage.get_height()))
-            self.group.add(self.text)
-            self.animating = True
-            self.animationFrame = values.settings.fps * 4
+            self.update_text(values, text)
+
         elif self.animating and self.animationFrame == 0:
             line = self.simEvents[0].split("|")
             pkmnName = line[3].split(",")[0].lower()
@@ -128,6 +156,21 @@ class Battle:
             pkmnSprite._layer = 3
             self.group.add(pkmnSprite)
 
+            self.animating = False
+            del self.simEvents[0]
+            self.state = 1
+
+    def handle_unboost(self, values):
+        if not self.animating and self.animationFrame == 0:
+            line = self.simEvents[0].split("|")
+            if 'Intimidate' in self.textMods:
+                pkmn = self.textMods['Intimidate']
+                opponent = line[2][5:]
+                text = f"""{pkmn}'s Intimidate cuts {opponent}'s attack!"""
+                self.update_text(values, text)
+
+        elif self.animating and self.animationFrame == 0:
+            #Eventually add some kind of animation here
             self.animating = False
             del self.simEvents[0]
             self.state = 1
@@ -223,6 +266,15 @@ class Battle:
             else:
                 p1, p2 = False, False
                 self.simEvents.append(line)
+
+    def update_text(self, values, text):
+        textImage = values.font20.render(text, True, (0, 0, 0))
+        if self.text != None:
+            self.text.kill()
+        self.text = sprites.GameSprite(textImage, (165, 400, textImage.get_width(), textImage.get_height()))
+        self.group.add(self.text)
+        self.animating = True
+        self.animationFrame = values.settings.fps
 
 
 def run_js_script():

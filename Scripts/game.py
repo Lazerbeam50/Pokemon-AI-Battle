@@ -29,6 +29,9 @@ class Game:
         self.screen = pygame.display.set_mode((self.values.settings.width, self.values.settings.height))
         pygame.display.set_caption("Pokemon AI Battle")
 
+        #FPS clock
+        self.fpsClock = pygame.time.Clock()
+
     def main_loop(self):
 
         while True:
@@ -63,6 +66,8 @@ class Game:
                     self.screen.blit(self.values.battle.surface, (0, 0))
 
                 pygame.display.update()
+                self.fpsClock.tick(self.values.settings.fps)
+
 
             except Exception:
                 tb = exc_info()  # return error information
