@@ -120,42 +120,97 @@ class Battle:
             else:
                 player = values.player2.name
             pkmn = line[3].split(',')[0]
-            text = f'{player} sent out {pkmn}!'
+            text = f'{player} sent out {pkmn.upper()}!'
             self.update_text(values, text)
 
         elif self.animating and self.animationFrame == 0:
             line = self.simEvents[0].split("|")
             pkmnName = line[3].split(",")[0].lower()
+            hpBarBox = resources.load_sprite("hp_box1.png")
             if 'p1a' in line[2]:
                 x = 110
                 y = 210
+                hpBox_x = 630
+                hpBox_y = 210
                 for pkmn in values.team1.selected:
                     if pkmn.nickname == pkmnName:
                         pkmnSprite = pkmn.backSprite
+                        break
             elif 'p1b' in line[2]:
                 x = 410
                 y = 210
+                hpBox_x = 680
+                hpBox_y = 310
                 for pkmn in values.team1.selected:
                     if pkmn.nickname == pkmnName:
                         pkmnSprite = pkmn.backSprite
+                        break
             elif 'p2a' in line[2]:
                 x = 650
                 y = 0
+                hpBox_x = 130
+                hpBox_y = 100
                 for pkmn in values.team2.selected:
                     if pkmn.nickname == pkmnName:
                         pkmnSprite = pkmn.frontSprite
+                        break
             elif 'p2b' in line[2]:
                 x = 950
                 y = 0
+                hpBox_x = 180
+                hpBox_y = 0
                 for pkmn in values.team2.selected:
                     if pkmn.nickname == pkmnName:
                         pkmnSprite = pkmn.frontSprite
+                        break
 
             pkmnSprite.rect.x = x
             pkmnSprite.rect.y = y
             pkmnSprite._layer = 3
-            self.group.add(pkmnSprite)
 
+            pkmn.hpBox = sprites.GameSprite(
+                hpBarBox,
+                (hpBox_x, hpBox_y, hpBarBox.get_width(), hpBarBox.get_height()),
+                3
+            )
+            if pkmn.gender != "":
+                gender = " (" + pkmn.gender.upper() + ")"
+            else:
+                gender = ""
+            pkmn.nameSprite = sprites.GameSprite(
+                values.font16.render(pkmnName.upper() + gender, True, (0, 0, 0)),
+                (hpBox_x + 15, hpBox_y + 15, 0, 0),
+                4
+            )
+            pkmn.hpBack = sprites.GameSprite(
+                pygame.Surface((300, 20)),
+                (hpBox_x + 15, hpBox_y + 30, 0, 0),
+                4
+            )
+            pkmn.hpBack.image.fill((128, 128, 128))
+            currentHP = int(line[4].split("/")[0])
+            maxHP = int(line[4].split("/")[1])
+            barLength = int((currentHP/maxHP) * 300)
+            pkmn.hpMain = sprites.GameSprite(
+                pygame.Surface((barLength, 20)),
+                (hpBox_x + 15, hpBox_y + 30, 0, 0),
+                5
+            )
+            if currentHP < maxHP/2:
+                if currentHP < maxHP/5:
+                    color = (255, 0, 0)
+                else:
+                    color = (255, 255, 0)
+            else:
+                color = (50, 205, 50)
+            pkmn.hpMain.image.fill(color)
+            pkmn.HPsprite = sprites.GameSprite(
+                values.font16.render(str(currentHP) + "/" + str(maxHP), True, (0, 0, 0)),
+                (hpBox_x + 320, hpBox_y + 30, 0, 0),
+                4
+            )
+            self.group.add([pkmnSprite, pkmn.hpBox, pkmn.nameSprite, pkmn.hpBack, pkmn.hpMain,
+                            pkmn.HPsprite])
             self.animating = False
             del self.simEvents[0]
             self.state = 1
