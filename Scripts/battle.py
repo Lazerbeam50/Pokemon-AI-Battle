@@ -36,10 +36,10 @@ class Battle:
 
     def update(self, values, event=None):
 
-        if self.doneSetup and event == None:
+        if self.doneSetup and event is None:
             self.count_frames()
             self.read_output(values)
-        elif self.doneSetup and event != None:
+        elif self.doneSetup and event is not None:
             if event.type == pyLocals.MOUSEBUTTONUP and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 clicked = False
@@ -109,8 +109,25 @@ class Battle:
             if self.currentButton.storage['pp'] > 0 and not self.currentButton.storage['disabled']:
                 if self.currentButton.storage['target'] in ['normal', 'any']:
                     self.currentMove = self.currentButton.storage
-                    self.state = 6
-                    self.doneSetup = False
+
+                    [option.kill() for option in self.playerOptions]
+                    [button.sprite.kill() for button in self.buttons]
+
+                    self.currentButton = None
+                    self.playerOptions = []
+                    self.buttons = []
+
+                    self.playerOptions.append(
+                        sprites.GameSprite(
+                            values.font20.render("Targets", True, (0, 0, 0)),
+                            (248, 530, 0, 0),
+                            2
+                        )
+                    )
+
+
+                    self.group.add(self.playerOptions)
+                    self.doneSetup = True
 
 
     def handle_sim_events(self, values):
@@ -356,7 +373,6 @@ class Battle:
 
         #Set up moves
 
-        print("Hit it!")
         self.playerOptions.append(
             sprites.GameSprite(
                 values.font20.render("Moves", True, (0, 0, 0)),

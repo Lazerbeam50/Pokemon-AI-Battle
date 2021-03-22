@@ -7,7 +7,7 @@ class Button:
         self.rect = pyLocals.Rect(rect)
         self.sprite = GameSprite(image, rect, layer)
         self.storage = storage
-        if group != None:
+        if group is not None:
             group.add(self.sprite)
 
 class GameSprite(pygame.sprite.Sprite):

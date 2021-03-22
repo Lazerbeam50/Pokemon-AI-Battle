@@ -25,9 +25,9 @@ class TeamPreviewManager:
 
     def update(self, values, event=None):
 
-        if self.doneSetup and event == None:
+        if self.doneSetup and event is None:
             pass
-        elif self.doneSetup and event != None:
+        elif self.doneSetup and event is not None:
             if event.type == pyLocals.MOUSEBUTTONUP and event.button == 1:
                 clicked = False
                 for pkmn in values.team1.pokemon:
