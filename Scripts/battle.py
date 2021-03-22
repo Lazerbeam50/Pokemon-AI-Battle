@@ -18,9 +18,13 @@ class Battle:
         self.awaitingSimOutput = True
         self.bgColour = None
         self.bgImage = None
+        self.buttons = []
+        self.currentButton = None
+        self.currentMove = None
         self.group = pygame.sprite.Group()
         self.doneSetup = False
         self.frame = 0
+        self.playerOptions = []
         self.rawOutput = None
         self.simEvents = []
         self.state = 0
@@ -36,7 +40,16 @@ class Battle:
             self.count_frames()
             self.read_output(values)
         elif self.doneSetup and event != None:
-            pass
+            if event.type == pyLocals.MOUSEBUTTONUP and event.button == 1:
+                pos = pygame.mouse.get_pos()
+                clicked = False
+                for button in self.buttons:
+                    clicked = sprites.is_point_inside_rect(pos[0], pos[1], button.rect)
+                    if clicked:
+                        #moves
+                        self.currentButton = button
+                        self.handle_player_options(values)
+                        break
         else:
 
             self.count_frames()
@@ -61,6 +74,10 @@ class Battle:
             #Unboosts
             elif self.state == 4:
                 self.handle_unboost(values)
+
+            #Set up player options
+            elif self.state == 5:
+                self.set_up_player_options(values)
 
     def count_frames(self):
         if self.frame == 29:
@@ -87,9 +104,18 @@ class Battle:
             self.animating = False
             self.state = 1
 
+    def handle_player_options(self, values):
+        if self.currentButton.use == 0:
+            if self.currentButton.storage['pp'] > 0 and not self.currentButton.storage['disabled']:
+                if self.currentButton.storage['target'] in ['normal', 'any']:
+                    self.currentMove = self.currentButton.storage
+                    self.state = 6
+                    self.doneSetup = False
+
+
     def handle_sim_events(self, values):
 
-        text = {'switch': 2, '-ability': 3, '-unboost': 4}
+        text = {'switch': 2, '-ability': 3, '-unboost': 4, 'turn': 5}
 
         #Iterate through events queue
         for line in self.simEvents[:]:
@@ -209,8 +235,12 @@ class Battle:
                 (hpBox_x + 320, hpBox_y + 30, 0, 0),
                 4
             )
-            self.group.add([pkmnSprite, pkmn.hpBox, pkmn.nameSprite, pkmn.hpBack, pkmn.hpMain,
-                            pkmn.HPsprite])
+            if line[2].split(":")[0] in ('p1a', 'p1b'):
+                spriteList = [pkmnSprite, pkmn.hpBox, pkmn.nameSprite, pkmn.hpBack, pkmn.hpMain,
+                            pkmn.HPsprite]
+            else:
+                spriteList = [pkmnSprite, pkmn.hpBox, pkmn.nameSprite, pkmn.hpBack, pkmn.hpMain]
+            self.group.add(spriteList)
             self.animating = False
             del self.simEvents[0]
             self.state = 1
@@ -287,20 +317,6 @@ class Battle:
         self.thread.start()
         values.threadRunning = True
 
-    def read_output(self, values):
-        if self.frame == 0 and self.awaitingSimOutput:
-            f = open("output-doc.txt", "r")
-            lines = f.readlines()
-            if lines:
-                self.rawOutput = lines
-                f = open("output-doc.txt", "w")
-                f.write("")
-                f.close()
-                self.awaitingSimOutput = False
-                self.interpret_output(values)
-                self.state = 1
-                self.doneSetup = False
-
     def interpret_output(self, values):
         p1 = False
         p2 = False
@@ -321,6 +337,100 @@ class Battle:
             else:
                 p1, p2 = False, False
                 self.simEvents.append(line)
+
+    def read_output(self, values):
+        if self.frame == 0 and self.awaitingSimOutput:
+            f = open("output-doc.txt", "r")
+            lines = f.readlines()
+            if lines:
+                self.rawOutput = lines
+                f = open("output-doc.txt", "w")
+                f.write("")
+                f.close()
+                self.awaitingSimOutput = False
+                self.interpret_output(values)
+                self.state = 1
+                self.doneSetup = False
+
+    def set_up_player_options(self, values):
+
+        #Set up moves
+
+        print("Hit it!")
+        self.playerOptions.append(
+            sprites.GameSprite(
+                values.font20.render("Moves", True, (0, 0, 0)),
+                (267, 530, 0, 0),
+                2
+            )
+        )
+
+        if self.state == 5:
+            i = 0
+        else:
+            i = 1
+        x_list = [0, 315]
+        y_dict = {0:560, 1:590}
+        pos = [0, 0]
+        for move in values.player1.request['active'][i]['moves']:
+            img = values.font16.render(move['move'], True, (0, 0, 0))
+            x = sprites.centre_x(img.get_width(), 315, x_list[pos[0]])
+            y = y_dict[pos[1]]
+            self.buttons.append(
+                sprites.Button(
+                    0,
+                    img,
+                    (x, y, img.get_width(), img.get_height()),
+                    2,
+                    move,
+                    self.group
+                )
+            )
+            if pos[0] == 1:
+                pos = [0, 1]
+            else:
+                pos[0] += 1
+
+        #Set up switches
+
+        self.playerOptions.append(
+            sprites.GameSprite(
+                values.font20.render("Switch", True, (0, 0, 0)),
+                (256, 620, 0, 0),
+                2
+            )
+        )
+        x = 20
+        for pkmn in values.team1.selected:
+            pkmn.miniSprite.rect.x = x
+            pkmn.miniSprite.rect.y = 640
+            #self.playerOptions.append(pkmn.miniSprite)
+            self.buttons.append(
+                sprites.Button(
+                    1,
+                    pkmn.miniSprite.image,
+                    pkmn.miniSprite.rect,
+                    2,
+                    pkmn,
+                    self.group
+                )
+            )
+            x += 158
+
+        active = []
+        for pkmn in values.player1.request['side']['pokemon']:
+            if pkmn['active']:
+                active.append(pkmn)
+
+        text = "What will " + active[i]['details'].split(',')[0].upper() + " do?"
+        self.update_text(values, text)
+        self.animating = False
+        self.animationFrame = 0
+
+        self.group.add(self.playerOptions)
+        self.doneSetup = True
+
+
 
     def update_text(self, values, text):
         textImage = values.font20.render(text, True, (0, 0, 0))

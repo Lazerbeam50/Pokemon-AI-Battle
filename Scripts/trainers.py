@@ -69,6 +69,7 @@ class Pokemon:
         self.hpBack = None
         self.hpMain = None
         self.nameSprite = None
+        self.smallName = None
         self.genderSprite = None
         self.HPsprite = None
         self.maxHPSprite = None

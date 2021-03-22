@@ -1,6 +1,15 @@
 import pygame
 import pygame.locals as pyLocals
 
+class Button:
+    def __init__(self, use, image, rect, layer=1, storage=None, group=None):
+        self.use = use
+        self.rect = pyLocals.Rect(rect)
+        self.sprite = GameSprite(image, rect, layer)
+        self.storage = storage
+        if group != None:
+            group.add(self.sprite)
+
 class GameSprite(pygame.sprite.Sprite):
     def __init__(self, image, rect, layer=1):
         pygame.sprite.Sprite.__init__(self)
