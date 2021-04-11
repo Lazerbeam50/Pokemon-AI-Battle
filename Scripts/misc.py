@@ -39,3 +39,27 @@ def is_blank(x, default):
         return default
     else:
         return x
+
+def split_string(fullString, maxLength):
+
+    currentStrings = []
+    outputStrings = []
+    finalStrings = []
+    currentLength = 0
+    stringList = fullString.split(" ")
+
+    for string in stringList:
+        if (currentLength + len(string) + 1) > maxLength:
+            outputStrings.append(currentStrings)
+            currentStrings = [string]
+            currentLength = len(string)
+        else:
+            currentStrings.append(string)
+            currentLength += len(string) + 1
+        if string is stringList[-1]:
+            outputStrings.append(currentStrings)
+
+    for cut in outputStrings:
+        finalStrings.append(" ".join(cut))
+
+    return finalStrings

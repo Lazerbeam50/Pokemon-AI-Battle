@@ -62,6 +62,7 @@ class Game:
                     self.values.battle.surface.fill(self.values.battle.bgColour)
 
                     self.values.battle.group.draw(self.values.battle.surface)
+                    self.values.battle.textGroup.draw(self.values.battle.surface)
 
                     self.screen.blit(self.values.battle.surface, (0, 0))
 

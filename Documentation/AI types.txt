@@ -1,0 +1,26 @@
+Random
+=
+Ally target
+-
+Switch
+-
+
+Standard++
+=
+Synergy mod
+Random Ballot Voting
+SM + RBV
+
+Win condition
+=
+
+Maximin
+=
+
+Minimax
+=
+Also need to consider:
+- How the AI learns during a battle
+- The assumptions it makes beforehand
+- Any heuristics
+- How maximin and minimax handle team preview
