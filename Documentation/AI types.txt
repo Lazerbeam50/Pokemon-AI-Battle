@@ -11,7 +11,7 @@ Synergy mod
 Random Ballot Voting
 SM + RBV
 
-Win condition
+Gameplan
 =
 
 Maximin

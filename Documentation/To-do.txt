@@ -1,0 +1,44 @@
+Menus
+=====
+- Add start menu
+- Add quick match
+	- Add opponent select
+	- Add team select
+- Add player team select
+- Add rental team builder
+
+AI
+==
+- Set up AI structure
+- Add random AI w/ switching
+- Add first version of Standard AI
+
+Visuals and audio
+=================
+- Add sprite flickering when hit
+- Add cries
+- Add HP bar ticking down
+- Add pokemon "bobbing" when selecting a move
+- "Sink" pokemon when they faint
+
+Battle UI
+=========
+X Add back option
+X Grey out fainted pokemon on the switch selection
+- Replace boxes
+- Show pokemon info on hover over
+- Show weather and field info when nothing is selected
+
+Game modes
+==========
+- Add AI vs AI mode
+
+Content
+=======
+- Add Blue and Leaf
+- Add more player teams
+- Add more AI teams
+
+Minor fixes
+===========
+- Display supereffective/crit messages after damage

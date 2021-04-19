@@ -1,6 +1,8 @@
 import pygame
 import pygame.locals as pyLocals
 
+import numpy as np
+
 class Button:
     def __init__(self, use, image, rect, layer=1, storage=None, group=None):
         self.use = use
@@ -40,3 +42,10 @@ def set_alphas(colour):
     colour.update(colour.r, colour.g, colour.b, 128)
 
     return colour
+
+def grayscale(img):
+    arr = pygame.surfarray.array3d(img)
+    #luminosity filter
+    avgs = [[(r*0.298 + g*0.587 + b*0.114) for (r,g,b) in col] for col in arr]
+    arr = np.array([[[avg,avg,avg] for avg in col] for col in avgs])
+    return pygame.surfarray.make_surface(arr)

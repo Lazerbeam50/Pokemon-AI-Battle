@@ -1,0 +1,37 @@
+- Speedy physical sweeper
+	- 252 Atk, 252 Spe, 4 bulk
+	- Adamant or Jolly nature
+- Speedy special sweeper
+	- 252 SpA, 252 Spe, 4 bulk
+	- Modest or Timid nature
+- Speedy mixed sweeper
+	- 252 Spe, rest in offenses
+	- Lonely, Naughty, Hasty, Naive, Mild or Rash nature
+
+- Bulky physical sweeper
+	- 252 Atk, rest in bulk
+	- Adamant nature
+- Bulky special sweeper
+	- 252 SpA, rest in bulk
+	- Modest nature
+
+- Trick room physical sweeper
+	- 252 Atk, rest in bulk
+	- 0 Speed IV
+	- Brave nature
+- Trick room special sweeper
+	- 252 SpA, rest in bulk
+	- 0 Speed IV
+	- Quiet nature
+- Trick room mixed sweeper
+	- Varies
+	- 0 Speed IV
+	- Brave or Quiet nature
+
+- Speedy support
+	- 252 Spe, rest in bulk
+	- Timid or Jolly nature
+
+- Bulky support
+	- 508 in bulk
+	- Bold, Impish, Calm or Careful nature

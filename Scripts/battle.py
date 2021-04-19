@@ -65,6 +65,11 @@ class Battle:
                         self.currentButton = button
                         self.handle_player_options(values)
                         break
+
+            elif event.type == pyLocals.MOUSEBUTTONUP and event.button == 3:
+                if not self.p1Ready:
+                    print("Cancelling!")
+                    self.back_button(values)
         else:
 
             self.count_frames()
@@ -173,9 +178,20 @@ class Battle:
                                                        "Placeholder"
                                                        ])
                     else:
-                        values.player2.choices.append(["default"])
+                        values.player2.choices.append(['default'])
 
             self.p2Ready = True
+
+
+    def back_button(self, values):
+        self.clear_options()
+        for poke in values.team1.selected:
+            poke.switchTarget = False
+        if self.state == 7:
+            values.player1.choices = []
+
+        self.state = 6
+        self.doneSetup = False
 
     def clear_options(self):
         [option.kill() for option in self.playerOptions]
@@ -233,9 +249,6 @@ class Battle:
             if self.p1Ready:
                 self.state = 8
                 self.doneSetup = False
-
-        #Call write input directly
-        #self.write_input(values, p1Wait=True)
 
     def handle_boost(self, values):
         if not self.animating and self.animationFrame == 0:
@@ -333,6 +346,7 @@ class Battle:
                     pkmn.HPsprite.kill()
                     pkmn.backSprite.kill()
                     pkmn.frontSprite.kill()
+                    pkmn.miniSprite.image = sprites.grayscale(pkmn.miniSprite.image)
                     pkmn.hpBack.kill()
                     pkmn.hpBox.kill()
                     pkmn.hpMain.kill()
@@ -886,7 +900,6 @@ class Battle:
                        )
 
         #Set up pokemon and moves
-        #values.team1.selected[0].backSprite.x =
 
         #Set up trainer sprites
         player1nameImage = values.font16.render(values.player1.name, True, (0, 0, 0))
@@ -1053,8 +1066,6 @@ class Battle:
         enemyLocation = 1
         slotLocation = 1
 
-        #hiddenpower = ['hiddenpowerfire', 'hiddenpowerwater', 'hiddenpowergrass', 'hiddenpowerelectric']
-
         if (
                 ('forceSwitch' in values.player1.request)
         ):
@@ -1081,23 +1092,6 @@ class Battle:
                         allyLocation -= 1
                         enemyLocation += 1
 
-                        """
-                        for moveset in activeSets[:]:
-                            activeMoves = [move['id'] for move in moveset['moves']]
-                            activeMoves.sort()
-
-                            if any([move in hiddenpower for move in pkmn1['moves']]):
-                                pkmn1Moves = list(set(pkmn1['moves']) - set(hiddenpower))
-                                pkmn1Moves.append('hiddenpower')
-                            else:
-                                pkmn1Moves = pkmn1['moves']
-
-                            pkmn1Moves.sort()
-                            if activeMoves == pkmn1Moves:
-                                pkmn2.moves = moveset
-                                activeSets.remove(moveset)
-                                break
-                        """
                         if activeSets:
                             pkmn2.moves = activeSets.pop(0)
                         self.p1Active.append(pkmn2)
@@ -1136,23 +1130,6 @@ class Battle:
                         allyLocation -= 1
                         enemyLocation += 1
 
-                        """
-                        for moveset in activeSets[:]:
-                            activeMoves = [move['id'] for move in moveset['moves']]
-                            activeMoves.sort()
-
-                            if any([move in hiddenpower for move in pkmn1['moves']]):
-                                pkmn1Moves = list(set(pkmn1['moves']) - set(hiddenpower))
-                                pkmn1Moves.append('hiddenpower')
-                            else:
-                                pkmn1Moves = pkmn1['moves']
-
-                            pkmn1Moves.sort()
-                            if activeMoves == pkmn1Moves:
-                                pkmn2.moves = moveset
-                                activeSets.remove(moveset)
-                                break
-                        """
                         if activeSets:
                             pkmn2.moves = activeSets.pop(0)
 
@@ -1204,7 +1181,7 @@ class Battle:
                     string += choice[0]
                 if len(values.player1.choices) == 2 and choice == values.player1.choices[0]:
                     string += ', '
-                elif len(values.player1.choices) == 1:
+                elif len(values.player1.choices) == 1 and len(self.p1Active) == 0:
                     string += ', default'
         if p2Wait:
             string += '#'
@@ -1221,7 +1198,7 @@ class Battle:
                     string += choice[0]
                 if len(values.player2.choices) == 2 and choice == values.player2.choices[0]:
                     string += ', '
-                elif len(values.player2.choices) == 1:
+                elif len(values.player2.choices) == 1 and len(self.p2Active) == 0:
                     string += ', default'
         f = open("input-doc.txt", "w")
         f.write(string)

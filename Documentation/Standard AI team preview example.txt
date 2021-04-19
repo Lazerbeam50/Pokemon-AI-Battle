@@ -1,0 +1,104 @@
+POKE
+---
+Checked by: 
+Countered by: 
+Checks: 
+Counters: 
+
+PLUSLE
+---
+Checked by: Snorlax
+Countered by: Venusaur
+Checks: 
+Counters: 
+
+MINUN
+---
+Checked by: Snorlax
+Countered by: Venusaur
+Checks: 
+Counters: 
+
+POLIWRATH
+---
+Checked by: Venusaur, Charizard, Espeon
+Countered by: Venusaur
+Checks: 
+Counters: 
+
+GIRAFARIG
+---
+Checked by: Arcanine, Suicune
+Countered by: 
+Checks: 
+Counters: 
+
+PIDGEOT
+---
+Checked by: Suicune
+Countered by: 
+Checks: 
+Counters: 
+
+CLAYDOL
+---
+Checked by: Venusaur, Charizard, Arcanine, Suicune
+Countered by: 
+Checks: 
+Counters: 
+
+VENUSAUR
+---
+Checked by: Pidgeot, Girafarig, Claydol
+Countered by: 
+Checks: 2
+Counters: 3
+
+CHARIZARD
+---
+Checked by: Plusle, Minun, Poliwrath
+Countered by: 
+Checks: 2
+Counters: 0
+
+ESPEON
+---
+Checked by: 
+Countered by: Girafarig, Claydol
+Checks: 1
+Counters: 0
+
+SNORLAX
+---
+Checked by: Poliwrath
+Countered by: 
+Checks: 2
+Counters: 0
+
+ARCANINE
+---
+Checked by: Poliwrath, Claydol
+Countered by: 
+Checks: 2
+Counters: 0
+
+SUICUNE
+---
+Checked by: Plusle, Minun
+Countered by: Poliwrath
+Checks: 3
+Counters: 0
+
+Selected
+--------
+Suicune
+Snorlax
+Venusaur
+(Either Charizard, Espeon or Arcanine)
+
+Leads
+-----
+If bringing Charizard:
+	- Suicune and Charizard
+Else
+	- Suicune and Espeon/Arcanine
