@@ -135,52 +135,13 @@ class Battle:
             elif self.state == 99:
                 print("Error")
 
+
+
+
     def ai_pick_moves(self, values):
         if not self.p2Ready and 'forceSwitch' not in values.player2.request and 'wait' not in values.player2.request:
             print("Let's take a look")
-            for i in range(len(self.p2Active)):
-                try:
-                    availableMoves = []
-                    for move in self.p2Active[i].moves['moves']:
-                        if move['pp'] > 0 and not move['disabled']:
-                            availableMoves.append(move)
-                    choice = random.choice(availableMoves)
-                    target = None
-                    if 'target' in choice:
-                        if choice['target'] in ['normal', 'any']:
-                            target = random.choice(self.p1Active)
-                        elif choice['target'] == 'adjacentAlly':
-                            target = -3 - self.p2Active[i].allyLocation
-                    if target is None:
-                        values.player2.choices.append([self.p2Active[i].nickname,
-                                                       choice['move'],
-                                                       choice['id']
-                                                       ])
-                    elif choice['target'] == 'adjacentAlly':
-                        values.player2.choices.append([self.p2Active[i].nickname,
-                                                       choice['move'],
-                                                       choice['id'],
-                                                       target,
-                                                       "Placeholder"])
-                    else:
-                        values.player2.choices.append([self.p2Active[i].nickname,
-                                                       choice['move'],
-                                                       choice['id'],
-                                                       target.enemyLocation,
-                                                       target.nickname])
-                except KeyError:
-                    if 'trapped' in values.player2.request['active'][i]:
-                        choice = self.p2Active[i].moves['moves'][0]
-                        values.player2.choices.append([self.p2Active[i].nickname,
-                                                       choice['move'],
-                                                       choice['id'],
-                                                       1,
-                                                       "Placeholder"
-                                                       ])
-                    else:
-                        values.player2.choices.append(['default'])
-
-            self.p2Ready = True
+            values.player2.ai.select_actions(self, values)
 
 
     def back_button(self, values):
@@ -229,26 +190,7 @@ class Battle:
 
         if not self.p2Ready and 'forceSwitch' in values.player2.request:
             print("Let's look")
-            #Iterate through options in request
-            options = []
-            for pkmn in values.player2.request['side']['pokemon']:
-                # Randomly select a pokemon that is not active and still has HP
-                if not pkmn['active'] and pkmn['condition'] != '0 fnt':
-                    options.append(pkmn)
-            #Set up choices list
-
-            random.shuffle(options)
-            fainted = int(values.player2.request['forceSwitch'][0]) + int(values.player2.request['forceSwitch'][1])
-            for i in range(min(fainted, len(options))):
-                values.player2.choices.append([
-                    "",
-                    options[i]['ident'][4:]
-                ])
-
-            self.p2Ready = True
-            if self.p1Ready:
-                self.state = 8
-                self.doneSetup = False
+            values.player2.ai.handle_force_switch(self, values)
 
     def handle_boost(self, values):
         if not self.animating and self.animationFrame == 0:
@@ -668,7 +610,12 @@ class Battle:
             )
             pkmn.hpBack.image.fill((128, 128, 128))
             currentHP = int(line[4].split("/")[0])
-            maxHP = int(line[4].split("/")[1])
+            try:
+                maxHP = int(line[4].split("/")[1])
+            except ValueError:
+                #Status errors mess with this bit
+                hpString = line[4].split("/")[1]
+                maxHP = int(hpString.split(hpString[-5:])[0])
             barLength = int((currentHP/maxHP) * 300)
             pkmn.hpMain = sprites.GameSprite(
                 pygame.Surface((barLength, 20)),
@@ -969,6 +916,7 @@ class Battle:
                 self.interpret_output(values)
                 self.state = 1
                 self.doneSetup = False
+            f.close()
 
     def set_up_player_options(self, values):
 
@@ -1204,6 +1152,7 @@ class Battle:
         f.write(string)
         f.close()
 
+        self.backupOutput = string
         print("Wrote output:", string)
         print(values.player2.choices)
         values.player1.choices = []

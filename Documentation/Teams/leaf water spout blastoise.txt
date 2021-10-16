@@ -1,0 +1,63 @@
+Blastoise (M) @ Mystic Water  
+Ability: Torrent  
+Level: 50  
+EVs: 4 HP / 252 SpA / 252 Spe  
+Timid Nature  
+IVs: 2 Atk / 30 SpA  
+- Water Spout  
+- Hydro Pump  
+- Hidden Power [Grass]  
+- Protect  
+
+Clefable (F) @ Leftovers  
+Ability: Magic Guard  
+Level: 50  
+EVs: 252 HP / 244 Def / 12 SpD  
+Calm Nature  
+- Follow Me  
+- Seismic Toss  
+- Light Screen  
+- Reflect  
+
+Gengar (M) @ Choice Specs  
+Ability: Levitate  
+Level: 50  
+EVs: 252 SpA / 4 SpD / 252 Spe  
+Timid Nature  
+IVs: 0 Atk  
+- Shadow Ball  
+- Psychic  
+- Sludge Bomb  
+- Energy Ball  
+
+Pidgeot (F) @ Lum Berry  
+Ability: Keen Eye  
+Level: 50  
+EVs: 252 Atk / 4 SpD / 252 Spe  
+Jolly Nature  
+- Tailwind  
+- U-turn  
+- Brave Bird  
+- Protect  
+
+Dugtrio (F) @ Life Orb  
+Ability: Arena Trap  
+Level: 50  
+EVs: 252 Atk / 4 SpD / 252 Spe  
+Jolly Nature  
+- Earthquake  
+- Sucker Punch  
+- Rock Slide  
+- Protect  
+
+Steelix (F) @ Chesto Berry  
+Ability: Rock Head  
+Level: 50  
+EVs: 84 HP / 252 Atk / 172 SpD  
+Brave Nature  
+IVs: 0 Spe  
+- Rest  
+- Iron Head  
+- Explosion  
+- Earthquake  
+

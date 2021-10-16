@@ -16,6 +16,7 @@ class Trainer:
         #trainerImage = sprites.get_translucent_sprite(trainerImage)
         self.sprite = sprites.GameSprite(trainerImage, (0, 0, trainerImage.get_width(), trainerImage.get_height()), 2)
 
+        self.ai = None
         self.choices = []
         self.request = None
 
@@ -81,5 +82,12 @@ class Pokemon:
         self.switchTarget = False
         self.request = None
 
+        self.checkedBy = []
+        self.checks = []
+        self.counteredBy = []
+        self.counters = []
         self.fainted = False
+        self.knownAbility = None
         self.moves = None
+        self.moveData = []
+        self.potentialMoves = []

@@ -17,14 +17,6 @@ def set_up_empty_database():
     ''')
 
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Teams
-    (
-    teamID INTEGER PRIMARY KEY,
-    charID INTEGER
-    )
-    ''')
-
-    cursor.execute('''
     CREATE TABLE IF NOT EXISTS BattlePokemon
     (
     pokeID INTEGER PRIMARY KEY,
@@ -55,6 +47,23 @@ def set_up_empty_database():
     ''')
 
     cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Moves
+    (
+    id INTEGER,
+    identifier TEXT PRIMARY KEY,
+    type_id INTEGER,
+    power INTEGER,
+    pp INTEGER,
+    accuracy INTEGER,
+    priority INTEGER,
+    target_id INTEGER,
+    damage_class_id INTEGER,
+    effect_id INTEGER,
+    effect_chance INTEGER
+    )
+    ''')
+
+    cursor.execute('''
     CREATE TABLE IF NOT EXISTS PokemonMedia
     (
     species TEXT,
@@ -62,6 +71,40 @@ def set_up_empty_database():
     backsprite TEXT,
     minisprite TEXT,
     cry TEXT
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS PokemonSpecies
+    (
+    id,
+    identifier TEXT PRIMARY KEY
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS PokemonTypes
+    (
+    pokemon_id INTEGER,
+    type_id INTEGER,
+    slot INTEGER
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Teams
+    (
+    teamID INTEGER PRIMARY KEY,
+    charID INTEGER
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS TypeMatchups
+    (
+    damage_type_id INTEGER,
+    target_type_id INTEGER,
+    damage_factor INTEGER
     )
     ''')
 

@@ -9,9 +9,10 @@ Menus
 
 AI
 ==
-- Set up AI structure
-- Add random AI w/ switching
+X Set up AI structure
+X Add random AI w/ switching
 - Add first version of Standard AI
+X Add in Hidden Power calculation for AI
 
 Visuals and audio
 =================

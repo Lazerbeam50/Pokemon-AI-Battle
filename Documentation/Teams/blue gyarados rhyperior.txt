@@ -1,0 +1,62 @@
+Gyarados (M) @ Life Orb  
+Ability: Intimidate  
+Level: 50  
+EVs: 252 Atk / 4 SpD / 252 Spe  
+Jolly Nature  
+- Dragon Dance  
+- Stone Edge  
+- Waterfall  
+- Protect  
+
+Rhyperior (M) @ Passho Berry  
+Ability: Lightning Rod  
+Level: 50  
+EVs: 8 HP / 252 Atk / 4 Def / 244 SpD  
+Adamant Nature  
+- Earthquake  
+- Hammer Arm  
+- Megahorn  
+- Protect  
+
+Dewgong (F) @ Leftovers  
+Ability: Thick Fat  
+Level: 50  
+EVs: 236 HP / 12 Def / 4 SpA / 4 SpD / 252 Spe  
+Timid Nature  
+- Icy Wind  
+- Fake Out  
+- Ice Beam  
+- Protect  
+
+Alakazam (M) @ Expert Belt  
+Ability: Synchronize  
+Level: 50  
+EVs: 252 SpA / 4 SpD / 252 Spe  
+Timid Nature  
+IVs: 0 Atk  
+- Energy Ball  
+- Psychic  
+- Shadow Ball  
+- Protect  
+
+Exeggutor (M) @ Sitrus Berry  
+Ability: Chlorophyll  
+Level: 50  
+EVs: 212 HP / 8 Def / 252 SpA / 36 SpD  
+Quiet Nature  
+IVs: 0 Atk  
+- Trick Room  
+- Light Screen  
+- Psychic  
+- Protect  
+
+Tauros @ Choice Band  
+Ability: Intimidate  
+Level: 50  
+EVs: 252 Atk / 4 SpD / 252 Spe  
+Adamant Nature  
+- Double-Edge  
+- Payback  
+- Rock Slide  
+- Iron Head  
+

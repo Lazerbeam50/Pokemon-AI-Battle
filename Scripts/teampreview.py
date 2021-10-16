@@ -6,6 +6,7 @@ import pygame.locals as pyLocals
 
 import random
 
+import ai
 import loaddata
 import resources
 import sprites
@@ -152,13 +153,10 @@ class TeamPreviewManager:
         self.group.add(self.confirmSprite)
 
         #AI trainer picks its team and order
-        order = [0, 1, 2, 3, 4, 5]
-        random.shuffle(order)
-        values.team2.selected = [values.team2.pokemon[order[0]],
-                                 values.team2.pokemon[order[1]],
-                                 values.team2.pokemon[order[2]],
-                                 values.team2.pokemon[order[3]]
-        ]
+        #values.player2.ai = ai.NewBark(values.team2)
+        values.player2.ai = ai.Littleroot(values.team2)
+        values.player2.ai.team_preview(values)
+
 
     def setup_order_sprites(self, values):
         #Remove old sprites from group

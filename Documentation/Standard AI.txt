@@ -5,7 +5,7 @@ For each move and target:
 If move is a standard physical or special move which doesn't target all/allAdjacent:
 
 Score = (type matchup * STAB * weather * abilityTarget * abilityUser * burn * screen * spread *
-		invulnerable * contact * check * 100)
+		invulnerable * contact * check * accuracy)
 
 Else if the move is a standard physical/special move but does target all or allAdjacent:
 
@@ -17,6 +17,8 @@ Else, score = 100
 Note: Moves like fake out, eruption and icy wind are considered non-standard
 
 Note: Non-targeting moves are considered only once. Ally-target is not considered
+
+For deciding on switch options:
 
 1 - Compare speeds:
 	- If current poke has only one opposing check on the field, which it is faster than and
