@@ -489,6 +489,8 @@ class Battle:
             #If an line is recognised, handle events accordingly
             try:
                 self.state = text[line.split("|")[1]]
+                if values.player2.ai.gatherInfo:
+                    values.player2.ai.gather_info(values, line)
                 if self.state == 2:
                     if line.split("|")[2] in self.switchLog:
                         self.simEvents.remove(line)

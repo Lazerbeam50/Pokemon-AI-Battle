@@ -43,3 +43,4 @@ Content
 Minor fixes
 ===========
 - Display supereffective/crit messages after damage
+- Add a "hurt itself in confusion!" message and adjust hp bar

@@ -5,7 +5,7 @@ For each move and target:
 If move is a standard physical or special move which doesn't target all/allAdjacent:
 
 Score = (type matchup * STAB * weather * abilityTarget * abilityUser * burn * screen * spread *
-		invulnerable * contact * check * accuracy)
+		invulnerable * contact * check * accuracy * buffs)
 
 Else if the move is a standard physical/special move but does target all or allAdjacent:
 

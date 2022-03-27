@@ -18,7 +18,7 @@ class CombinedOption:
             self.score = option1.score
 
 class MoveData:
-    def __init__(self, data, pokemon):
+    def __init__(self, data, pokemon=None):
         self.id = data[0][0]
         self.identifier = data[0][1]
         self.typeID = data[0][2]
@@ -32,7 +32,7 @@ class MoveData:
         self.effectChance = misc.is_blank(data[0][10], None)
 
         #Check for hidden power
-        if self.id == 237:
+        if self.id == 237 and pokemon is not None:
             #Set up type bits
             if pokemon.hpIV % 2 == 0:
                 a = 0
@@ -110,10 +110,17 @@ class AI:
     information about the AI team and methods for decision making
     """
     def __init__(self, team):
+        self.gatherInfo = True
         self.useDefault = False
         self.team = team
 
     def compute_checks(self, values):
+        #Clear out check and counter lists
+        for poke in values.team1.pokemon + values.team2.pokemon:
+            poke.checks = []
+            poke.checkedBy = []
+            poke.counters = []
+            poke.counteredBy = []
         #Iterate through each combination of player and AI pokemon
         for poke1 in values.team1.pokemon:
             for poke2 in self.team.pokemon:
@@ -138,6 +145,29 @@ class AI:
                 elif bestDamage2 < 100:
                     poke2.counteredBy.append(poke1)
                     poke1.counters.append(poke2)
+
+    def gather_info(self, values, line):
+        print("AI gathering line:", line)
+        try:
+            #If line is an enemy move, see if it is already in the known enemy move list
+            if line.split("|")[1] == 'move' and line.split("|")[2][:2] == 'p1':
+                move = line.split("|")[3].lower().replace(" ", "")
+                for pkmn in values.battle.p1Active:
+                    if pkmn.nickname == line.split("|")[2][5:].lower():
+                        user = pkmn
+                if move not in user.knownMoves:
+                    # If not already listed, load data and add it add it
+                    user.knownMoves.append(move)
+                    user.moveData.append(MoveData(loaddata.load_moves(move)))
+                    #If any of the enemy move lists are 4 items long, empty its potential moves list
+                    if len(user.moveData) >= 4:
+                        user.potentialMoves = []
+                    #If any changes have taken place, recalculate checks and counters
+                    self.compute_checks(values)
+        except KeyError:
+            pass
+        except IndexError:
+            pass
 
     def get_best_damage_factor(self, moveList, attacker, defender):
         bestDamage = 0
@@ -262,6 +292,7 @@ class Pallet(AI):
 
     def __init__(self, team):
         AI.__init__(self, team)
+        self.gatherInfo = False
 
     def team_preview(self, values):
         order = [0, 1, 2, 3, 4, 5]
@@ -324,6 +355,7 @@ class NewBark(Pallet):
 
     def __init__(self, team):
         Pallet.__init__(self, team)
+        self.gatherInfo = False
 
     def select_actions(self, battle, values):
 
@@ -522,7 +554,10 @@ class Littleroot(AI):
                     target = None
                     if 'target' in option.move:
                         if option.move['target'] in ['normal', 'any']:
-                            target = battle.p1Active[option.target]
+                            try:
+                                target = battle.p1Active[option.target]
+                            except IndexError:
+                                print("Let's look!")
                         elif option.move['target'] == 'adjacentAlly':
                             target = -3 - option.user.allyLocation
                     if target is None:

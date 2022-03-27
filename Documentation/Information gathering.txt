@@ -2,6 +2,8 @@ If move:
 	- Search for move user
 	- If user is foe
 		- If move not in known moves, add it
+			- If the known moves list is 4 items long, empty the potential moves list
+			- Re-calculate checks and counters
 	- Record priority bracket of move
 	- Once a priority bracket has closed and has more than one pokemon in it, add pokemon to 
 	speedlist in order of attacking, if they are not already in there

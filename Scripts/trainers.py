@@ -90,4 +90,5 @@ class Pokemon:
         self.knownAbility = None
         self.moves = None
         self.moveData = []
+        self.knownMoves = []
         self.potentialMoves = []
