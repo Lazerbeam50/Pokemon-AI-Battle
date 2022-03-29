@@ -43,4 +43,11 @@ Content
 Minor fixes
 ===========
 - Display supereffective/crit messages after damage
+
+
+Major fixes
+===========
+- Fix bug where the below message displays after the ai is double KO'ed and has only one pokemon
+ left on the bench:
+	|error|[Invalid choice] Incomplete choice: switch Charizard - missing other pokemon
 - Add a "hurt itself in confusion!" message and adjust hp bar

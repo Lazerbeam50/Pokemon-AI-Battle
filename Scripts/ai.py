@@ -110,20 +110,32 @@ class AI:
     information about the AI team and methods for decision making
     """
     def __init__(self, team):
+        self.enemyPokemonSeen = []
         self.gatherInfo = True
         self.useDefault = False
         self.team = team
 
-    def compute_checks(self, values):
+    def compute_checks(self, values, inBattle=False):
         #Clear out check and counter lists
         for poke in values.team1.pokemon + values.team2.pokemon:
             poke.checks = []
             poke.checkedBy = []
             poke.counters = []
             poke.counteredBy = []
+
+        if inBattle:
+            #If we know which 4 pokemon the opponent has brought, only calculate checks for those pokemon
+            if len(self.enemyPokemonSeen) == 4:
+                team1 = [pkmn for pkmn in values.team1.pokemon if pkmn.nickname in self.enemyPokemonSeen]
+            else:
+                team1 = values.team1.pokemon
+            team2 = values.battle.p2Active + values.battle.p2Side
+        else:
+            team1 = values.team1.pokemon
+            team2 = self.team.pokemon
         #Iterate through each combination of player and AI pokemon
-        for poke1 in values.team1.pokemon:
-            for poke2 in self.team.pokemon:
+        for poke1 in team1:
+            for poke2 in team2:
                 #Iterate through all of players known and assumed moves, saving best damage factor
                 bestDamage1 = self.get_best_damage_factor(poke1.potentialMoves, poke1, poke2)
                 bestDamage1 = max(self.get_best_damage_factor(poke1.moveData, poke1, poke2), bestDamage1)
@@ -163,7 +175,13 @@ class AI:
                     if len(user.moveData) >= 4:
                         user.potentialMoves = []
                     #If any changes have taken place, recalculate checks and counters
-                    self.compute_checks(values)
+                    self.compute_checks(values, inBattle=True)
+            #If line is a switch, see if the ai has already seen this pokemon
+            elif line.split("|")[1] == 'switch' and line.split("|")[2][:2] == 'p1':
+                pkmn = line.split("|")[2][5:].lower()
+                if pkmn not in self.enemyPokemonSeen:
+                    self.enemyPokemonSeen.append(pkmn)
+                    self.compute_checks(values, inBattle=True)
         except KeyError:
             pass
         except IndexError:
@@ -236,7 +254,11 @@ class AI:
         #Accuracy
         accuracy = moveData.accuracy/100
 
-        score = typeMatchup * stab * spread * accuracy
+        #Checks/Counters
+
+        checks = 1 + (0.1 * len(target.checks)) + (0.1 * len(target.counters))
+
+        score = typeMatchup * stab * spread * accuracy * checks
 
         return int(score)
 
@@ -273,11 +295,15 @@ class AI:
 
         random.shuffle(options)
         fainted = int(values.player2.request['forceSwitch'][0]) + int(values.player2.request['forceSwitch'][1])
-        for i in range(min(fainted, len(options))):
-            values.player2.choices.append([
-                "",
-                options[i]['ident'][4:]
-            ])
+        #Attempted fix for double ko bug. When no pkmn are active and only one is on the bench, use the default action
+        if fainted == 2 and len(options) == 1:
+            values.player2.choices.append(['default'])
+        else:
+            for i in range(min(fainted, len(options))):
+                values.player2.choices.append([
+                    "",
+                    options[i]['ident'][4:]
+                ])
 
         battle.p2Ready = True
         if battle.p1Ready:
