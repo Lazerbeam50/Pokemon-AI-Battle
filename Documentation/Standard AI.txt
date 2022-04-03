@@ -41,7 +41,8 @@ Factors are then multiplied by 80.
 When deciding on a forced switch:
 
 	- Randomly select between the pokemon which check the most of the opponent's current pokes 
-	on the field. 
+	on the field, and is not checked by them. Bonus points if it counters them and is not
+	countered. 
 
 The AI then creates a cross join of each Pokémon's options, removing the only impossible option 
 (both pokes switching to the same target).

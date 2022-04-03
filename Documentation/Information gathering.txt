@@ -4,7 +4,28 @@ If move:
 		- If move not in known moves, add it
 			- If the known moves list is 4 items long, empty the potential moves list
 			- Re-calculate checks and counters
-	- Record priority bracket of move
-	- Once a priority bracket has closed and has more than one pokemon in it, add pokemon to 
-	speedlist in order of attacking, if they are not already in there
+	- Record all moves used in order
+Elif switch:
+	- If enemy, add them to list of seen pokemon
+		- Re-calculate checks
+			- If all 4 enemy pkmn have been seen, calculate based on just these 4
+Elif buff/debuff:
+	- Record
+Elif status:
+	- Record
+Elif field change
+	- Record
 
+====
+Interpret info
+====
+Look through move list
+	- If count of unique priorities is less than the count of moves:
+		- For each combination of two moves/pkmn within a priority bracket
+			- Let pkmn A be the faster of the two
+			- Calculate the ratio of speed scalars
+			- If pkmn A has not been recorded to be faster than B before, record this
+			- Otherwise, see if pkmn A has been recorded to be faster on a higher
+			ratio. If so, update this info with the new ratio.
+
+Update speed scalars based on buffs/debuffs/status/field changes
