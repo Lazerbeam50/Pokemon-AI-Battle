@@ -177,11 +177,27 @@ class AI:
                     #If any changes have taken place, recalculate checks and counters
                     self.compute_checks(values, inBattle=True)
             #If line is a switch, see if the ai has already seen this pokemon
-            elif line.split("|")[1] == 'switch' and line.split("|")[2][:2] == 'p1':
-                pkmn = line.split("|")[2][5:].lower()
-                if pkmn not in self.enemyPokemonSeen:
-                    self.enemyPokemonSeen.append(pkmn)
+            elif line.split("|")[1] == 'switch':
+                player = line.split("|")[2][:2]
+                pkmn = values.pokemon[player][line.split("|")[2][5:].lower()]
+                pkmn.reset_stat_stages()
+                if pkmn.nickname not in self.enemyPokemonSeen and player == 'p1':
+                    self.enemyPokemonSeen.append(pkmn.nickname)
                     self.compute_checks(values, inBattle=True)
+            #Record stat changes
+            elif line.split("|")[1] == '-boost':
+                player = line.split("|")[2][:2]
+                pkmn = values.pokemon[player][line.split("|")[2][5:].lower()]
+                pkmn.statStages[line.split("|")[3]] = min(
+                    pkmn.statStages[line.split("|")[3]] + int(line.split("|")[4]), 6
+                )
+            elif line.split("|")[1] == '-unboost':
+                player = line.split("|")[2][:2]
+                pkmn = values.pokemon[player][line.split("|")[2][5:].lower()]
+                pkmn.statStages[line.split("|")[3]] = max(
+                    pkmn.statStages[line.split("|")[3]] - int(line.split("|")[4]), -6
+                )
+
         except KeyError:
             pass
         except IndexError:

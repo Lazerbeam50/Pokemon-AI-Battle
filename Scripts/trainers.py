@@ -92,3 +92,15 @@ class Pokemon:
         self.moveData = []
         self.knownMoves = []
         self.potentialMoves = []
+
+        self.reset_stat_stages()
+
+    def reset_stat_stages(self):
+
+        self.statStages = {
+            'atk': 0,
+            'def': 0,
+            'spa': 0,
+            'spd': 0,
+            'spe': 0
+        }

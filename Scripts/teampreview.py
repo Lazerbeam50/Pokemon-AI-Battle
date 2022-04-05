@@ -72,6 +72,12 @@ class TeamPreviewManager:
         values.team1 = trainers.Team(loaddata.load_team(values.team1))
         values.team2 = trainers.Team(loaddata.load_team(values.team2))
 
+        values.pokemon = {'p1': {}, 'p2': {}}
+        for pkmn in values.team1.pokemon:
+            values.pokemon['p1'][pkmn.nickname] = pkmn
+        for pkmn in values.team2.pokemon:
+            values.pokemon['p2'][pkmn.nickname] = pkmn
+
         #Set background colour
         self.bgColour = (135, 206, 250)
 
