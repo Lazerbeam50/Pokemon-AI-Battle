@@ -272,7 +272,7 @@ class AI:
 
         #Checks/Counters
 
-        checks = 1 + (0.1 * len(target.checks)) + (0.1 * len(target.counters))
+        checks = 1 + (1 * len(target.checks)) + (0.5 * len(target.counters))
 
         score = typeMatchup * stab * spread * accuracy * checks
 

@@ -5,7 +5,7 @@ For each move and target:
 If move is a standard physical or special move which doesn't target all/allAdjacent:
 
 Score = (type matchup * STAB * weather * abilityTarget * abilityUser * burn * screen * spread *
-		invulnerable * contact * check * accuracy * buffs)
+		invulnerable * contact * check * accuracy * buffs * status)
 
 Else if the move is a standard physical/special move but does target all or allAdjacent:
 
@@ -22,7 +22,7 @@ Score features
 --------------
 
 Check
-	- 1 + (0.1 * count of pokemon checked) + (0.1 * count of pokemon countered)
+	- 1 + (1 * count of pokemon checked) + (0.5 * count of pokemon countered)
 
 For deciding on switch options:
 
@@ -31,10 +31,20 @@ For deciding on switch options:
 	checks back, disincentivise switch (0.9)
 	- Else if current pokemon is checked at all, incentivise switch (3.8)
 	- Else, disincentivise switch (0.9)
-2 - Switch target is not checked or countered (1.25, else 0.9)
-3 - Switch target counters at least one opponent and is not checked by the other (1.5, else 0.9)
-4 - Net buff score (more debuffs encourage a switch, more buffs discourage)
-5 - Average defensive stats for switch target (bulker switch ins are safer pivots)
+2 - Net buff score (more debuffs encourage a switch, more buffs discourage)
+3 - Is current poke dead weight?
+	- If current poke is any of the following, incentivise switch (3, else 0.9)
+		- Frozen and has no thaw out moves
+		- Asleep without Snore, Sleep Talk or Rest
+		- Countered by both enemy pokes
+
+4 - Switch target is not checked or countered (1.25, else 0.9)
+5 - Switch target counters at least one opponent and is not checked by the other (1.5, else 0.9)
+6 - Average defensive stats for switch target (bulker switch ins are safer pivots)
+7 - Switch target ability bonus
+	- e.g. Target has Intimidate and opponents are physical
+	- Air Lock, Cloud Nine, Damp, Drizzle, Drought, Flower Gift, Intimidate, Lightningrod, 
+	Sand Stream, Snow Warning, Storm Drain, and Trace
 
 Factors are then multiplied by 80.
 
