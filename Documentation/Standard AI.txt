@@ -24,6 +24,14 @@ Score features
 Check
 	- 1 + (1 * count of pokemon checked) + (0.5 * count of pokemon countered)
 
+Buffs
+	- define userBuff as:
+		- e^(attack stage/5) - 1 or e^(spA stage/5) - 1
+	- define enemyBuff as:
+		- e^((attack stage/5) + (spA stage/5) + (speed stage/5)) - 1
+
+	= 1 + userBuff + enemyBuff
+
 For deciding on switch options:
 
 1 - Compare speeds:

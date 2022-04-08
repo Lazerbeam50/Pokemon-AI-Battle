@@ -274,7 +274,23 @@ class AI:
 
         checks = 1 + (1 * len(target.checks)) + (0.5 * len(target.counters))
 
-        score = typeMatchup * stab * spread * accuracy * checks
+        #Buffs
+        if moveData.damageClassID == 2:
+            attackStage = attacker.statStages['atk']
+        else:
+            attackStage = attacker.statStages['spa']
+
+        userBuff = (math.e ** (attackStage/5)) - 1
+
+        enemyBuff = (math.e ** (
+                (target.statStages['atk']/5) +
+                (target.statStages['spa']/5) +
+                (target.statStages['spe']/5)
+        )) - 1
+
+        buffs = 1 + userBuff + enemyBuff
+
+        score = typeMatchup * stab * spread * accuracy * checks * buffs
 
         return int(score)
 
