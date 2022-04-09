@@ -197,6 +197,11 @@ class AI:
                 pkmn.statStages[line.split("|")[3]] = max(
                     pkmn.statStages[line.split("|")[3]] - int(line.split("|")[4]), -6
                 )
+            #Note status changes
+            elif line.split("|")[1] == '-status':
+                player = line.split("|")[2][:2]
+                pkmn = values.pokemon[player][line.split("|")[2][5:].lower()]
+                pkmn.statusCondition = line.split("|")[3].replace("\n", "")
 
         except KeyError:
             pass
@@ -290,7 +295,23 @@ class AI:
 
         buffs = 1 + userBuff + enemyBuff
 
-        score = typeMatchup * stab * spread * accuracy * checks * buffs
+        #Status conditions
+        isPhysical = False
+        for m in target.moveData:
+            if m.damageClassID == 2:
+                isPhysical = True
+                break
+
+        if target.statusCondition == 'frz' and moveData.typeID == 10:
+            status = 0.05
+        elif target.statusCondition in ['slp', 'frz']:
+            status = 0.75
+        elif target.statusCondition == 'brn' and isPhysical:
+            status = 0.5
+        else:
+            status = 1
+
+        score = typeMatchup * stab * spread * accuracy * checks * buffs * status
 
         return int(score)
 

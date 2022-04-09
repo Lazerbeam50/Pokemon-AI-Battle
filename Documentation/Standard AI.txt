@@ -1,4 +1,4 @@
-Standard
+Standard move algorithm
 =======
 For each move and target:
 
@@ -32,6 +32,15 @@ Buffs
 
 	= 1 + userBuff + enemyBuff
 
+Status
+	- If target is frozen and move type is fire, 0.05
+	- Elif target is asleep or frozen, 0.75
+	- Elif target is burned and has used physical moves, 0.5
+	- Else 1
+
+Switching
+---------
+
 For deciding on switch options:
 
 1 - Compare speeds:
@@ -56,11 +65,17 @@ For deciding on switch options:
 
 Factors are then multiplied by 80.
 
+Force switch
+------------
+
 When deciding on a forced switch:
 
 	- Randomly select between the pokemon which check the most of the opponent's current pokes 
 	on the field, and is not checked by them. Bonus points if it counters them and is not
 	countered. 
+
+Cross join and Synergy Adjustment
+---------------------------------
 
 The AI then creates a cross join of each Pokémon's options, removing the only impossible option 
 (both pokes switching to the same target).
@@ -70,8 +85,14 @@ Earthquake + Protect and penalising combinations like Earthquake + Switch into v
 
 The AI finally chooses randomly between the joint highest combos (assuming some are joint first).
 
+Move voting
+-----------
+
 More random versions of the AI should create votes proportional to the score of each vote and choose 
 one at random.
+
+Team preview
+------------
 
 For team preview:
 

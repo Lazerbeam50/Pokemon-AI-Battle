@@ -92,6 +92,7 @@ class Pokemon:
         self.moveData = []
         self.knownMoves = []
         self.potentialMoves = []
+        self.statusCondition = ''
 
         self.reset_stat_stages()
 
