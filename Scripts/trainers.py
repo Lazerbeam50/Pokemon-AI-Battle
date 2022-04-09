@@ -20,6 +20,7 @@ class Trainer:
         self.choices = []
         self.request = None
 
+        self.side = []
 
 class Team:
     def __init__(self, data):

@@ -162,20 +162,21 @@ class AI:
         print("AI gathering line:", line)
         try:
             #If line is an enemy move, see if it is already in the known enemy move list
-            if line.split("|")[1] == 'move' and line.split("|")[2][:2] == 'p1':
-                move = line.split("|")[3].lower().replace(" ", "")
-                for pkmn in values.battle.p1Active:
-                    if pkmn.nickname == line.split("|")[2][5:].lower():
-                        user = pkmn
-                if move not in user.knownMoves:
-                    # If not already listed, load data and add it add it
-                    user.knownMoves.append(move)
-                    user.moveData.append(MoveData(loaddata.load_moves(move)))
-                    #If any of the enemy move lists are 4 items long, empty its potential moves list
-                    if len(user.moveData) >= 4:
-                        user.potentialMoves = []
-                    #If any changes have taken place, recalculate checks and counters
-                    self.compute_checks(values, inBattle=True)
+            if line.split("|")[1] == 'move':
+                if line.split("|")[2][:2] == 'p1':
+                    move = line.split("|")[3].lower().replace(" ", "")
+                    for pkmn in values.battle.p1Active:
+                        if pkmn.nickname == line.split("|")[2][5:].lower():
+                            user = pkmn
+                    if move not in user.knownMoves:
+                        # If not already listed, load data and add it add it
+                        user.knownMoves.append(move)
+                        user.moveData.append(MoveData(loaddata.load_moves(move)))
+                        #If any of the enemy move lists are 4 items long, empty its potential moves list
+                        if len(user.moveData) >= 4:
+                            user.potentialMoves = []
+                        #If any changes have taken place, recalculate checks and counters
+                        self.compute_checks(values, inBattle=True)
             #If line is a switch, see if the ai has already seen this pokemon
             elif line.split("|")[1] == 'switch':
                 player = line.split("|")[2][:2]
@@ -202,6 +203,21 @@ class AI:
                 player = line.split("|")[2][:2]
                 pkmn = values.pokemon[player][line.split("|")[2][5:].lower()]
                 pkmn.statusCondition = line.split("|")[3].replace("\n", "")
+
+            #Note side field effects
+            elif line.split("|")[1] == '-sidestart':
+                player = line.split("|")[2][:2]
+                if 'p1' in player:
+                    values.player1.side.append(line.split("|")[3].replace("move: ", ""))
+                else:
+                    values.player2.side.append(line.split("|")[3].replace("move: ", ""))
+
+            elif line.split("|")[1] == '-sideend':
+                player = line.split("|")[2][:2]
+                if 'p1' in player:
+                    values.player1.side.remove(line.split("|")[3].replace("move: ", ""))
+                else:
+                    values.player2.side.remove(line.split("|")[3].replace("move: ", ""))
 
         except KeyError:
             pass
