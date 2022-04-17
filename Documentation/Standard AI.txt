@@ -120,4 +120,5 @@ For leads, prioritise pokes who can set up first:
 After that (or as a tiebreaker) prioritise the pokemon with the most checks. Finally, prioritise
 the fastest pokemon.
 
-
+Once the four pokemon are selected, set up speed relationships for each pair. Calculate the min/
+max ratios need to be faster or slower.

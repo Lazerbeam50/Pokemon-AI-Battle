@@ -94,6 +94,7 @@ class Pokemon:
         self.knownMoves = []
         self.potentialMoves = []
         self.statusCondition = ''
+        self.speedMult = 1
 
         self.reset_stat_stages()
 

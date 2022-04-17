@@ -114,6 +114,7 @@ class AI:
         self.gatherInfo = True
         self.useDefault = False
         self.team = team
+        self.turnOrder = []
 
     def compute_checks(self, values, inBattle=False):
         #Clear out check and counter lists

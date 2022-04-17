@@ -28,4 +28,15 @@ Look through move list
 			- Otherwise, see if pkmn A has been recorded to be faster on a higher
 			ratio. If so, update this info with the new ratio.
 
+Look through all pokemon that have speed relationships
+	- Compare each combination for 2 pkmn that are not both on the ai's team
+		- If it does not have a speed relationship for each opposing pkmn and ally pkmn	(
+		if it's not the ai's pkmn), look through each relationship to see if more speed
+		relationships can be inferred.
+			- E.g. if pkmn A is faster than pkmn B at ratio 1, see what pkmn B is 
+			faster than. If it is faster than some pkmn C at a ratio of 1 or lower,
+			then pkmn A must also be faster than pkmn C.
+			- Conduct these checks wherever a pkmn C does not already have a speed
+			relationship with pkmn A.
+
 Update speed scalars based on buffs/debuffs/status/field changes
