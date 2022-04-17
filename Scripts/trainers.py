@@ -4,6 +4,8 @@
 
 import pygame
 
+import math
+
 import misc
 import resources
 import sprites
@@ -97,6 +99,32 @@ class Pokemon:
         self.speedMult = 1
 
         self.reset_stat_stages()
+
+    def compute_stats(self, values, baseStats):
+        self.stats = {}
+        #Calculate hp
+        #If Shedinja, set hp to 1
+        if self.species == "shedinja":
+            self.stats['hp'] = 1
+        else:
+            self.stats['hp'] = math.floor((2 * baseStats[0][0] + self.hpIV + math.floor(self.hpEV/4)) * 50/100) + 60
+
+        #Itterate through the 5 other stats
+        bases = [baseStats[1][0], baseStats[2][0], baseStats[3][0], baseStats[4][0], baseStats[5][0]]
+        ivs = [self.atkIV, self.defIV, self.spaIV, self.spdIV, self.speIV]
+        evs = [self.atkEV, self.defEV, self.spaEV, self.spdEV, self.speEV]
+        nature = values.natures[self.nature]
+        finalStats = []
+
+        for i in range(5):
+            finalStats.append(
+                math.floor((math.floor((2 * bases[i] + ivs[i] + math.floor(evs[i]/4)) * 50/100) + 5) * nature[i])
+            )
+        self.stats['atk'] = finalStats[0]
+        self.stats['def'] = finalStats[1]
+        self.stats['spa'] = finalStats[2]
+        self.stats['spd'] = finalStats[3]
+        self.stats['spe'] = finalStats[4]
 
     def reset_stat_stages(self):
 

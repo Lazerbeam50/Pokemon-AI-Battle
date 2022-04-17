@@ -83,6 +83,15 @@ def set_up_empty_database():
     ''')
 
     cursor.execute('''
+    CREATE TABLE IF NOT EXISTS PokemonStats
+    (
+    pokemon_id INTEGER,
+    stat_id INTEGER,
+    base_stat INTEGER
+    )
+    ''')
+
+    cursor.execute('''
     CREATE TABLE IF NOT EXISTS PokemonTypes
     (
     pokemon_id INTEGER,

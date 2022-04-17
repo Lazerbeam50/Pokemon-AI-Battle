@@ -78,6 +78,10 @@ class TeamPreviewManager:
         for pkmn in values.team2.pokemon:
             values.pokemon['p2'][pkmn.nickname] = pkmn
 
+        #Load stats
+        for pkmn in list(values.pokemon['p1'].values()) + list(values.pokemon['p2'].values()):
+            pkmn.compute_stats(values, loaddata.load_pokemon_stats(pkmn.species))
+
         #Set background colour
         self.bgColour = (135, 206, 250)
 

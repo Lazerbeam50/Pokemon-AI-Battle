@@ -63,6 +63,21 @@ def load_pokemon_sprites(pokemon):
     db.close()
     return data
 
+def load_pokemon_stats(pokemon):
+    db = sqlite3.connect('Game data/game_data')
+    cursor = db.cursor()
+    cursor.execute('''
+                SELECT s.base_stat
+                FROM PokemonStats s
+                JOIN PokemonSpecies p ON s.pokemon_id = p.id
+                WHERE p.identifier = ?
+                ORDER BY s.stat_id ASC
+                ''',(pokemon,))
+    data = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return data
+
 def load_pokemon_types(pokemon):
     db = sqlite3.connect('Game data/game_data')
     cursor = db.cursor()
