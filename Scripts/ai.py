@@ -133,11 +133,21 @@ class AI:
 
         if inBattle:
             #If we know which 4 pokemon the opponent has brought, only calculate checks for those pokemon
+            team1 = []
             if len(self.enemyPokemonSeen) == 4:
-                team1 = [pkmn for pkmn in values.team1.pokemon if pkmn.nickname in self.enemyPokemonSeen]
+                for pkmn in values.team1.pokemon:
+                    if pkmn.nickname in self.enemyPokemonSeen and pkmn.request is not None:
+                        if pkmn.request['condition'] != '0 fnt':
+                            team1.append(pkmn)
+            #Else, consider all pokemon that haven't already fainted
             else:
-                team1 = values.team1.pokemon
-            team2 = values.battle.p2Active + values.battle.p2Side
+                for pkmn in values.team1.pokemon:
+                    if pkmn.request is not None:
+                        if pkmn.request['condition'] != '0 fnt':
+                            team1.append(pkmn)
+                    else:
+                        team1.append(pkmn)
+            team2 = [pkmn for pkmn in values.team2.selected if pkmn.request['condition'] != '0 fnt']
         else:
             team1 = values.team1.pokemon
             team2 = self.team.pokemon
@@ -193,7 +203,10 @@ class AI:
                 pkmn.reset_stat_stages()
                 if pkmn.nickname not in self.enemyPokemonSeen and player == 'p1':
                     self.enemyPokemonSeen.append(pkmn.nickname)
-                    self.compute_checks(values, inBattle=True)
+                    try:
+                        self.compute_checks(values, inBattle=True)
+                    except TypeError:
+                        pass
             #Record stat changes
             elif line.split("|")[1] == '-boost':
                 player = line.split("|")[2][:2]
