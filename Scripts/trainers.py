@@ -90,11 +90,13 @@ class Pokemon:
         self.counteredBy = []
         self.counters = []
         self.fainted = False
+        self.fasterThan = {}
         self.knownAbility = None
         self.moves = None
         self.moveData = []
         self.knownMoves = []
         self.potentialMoves = []
+        self.slowerThan = {}
         self.statusCondition = ''
         self.speedMult = 1
 

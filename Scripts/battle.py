@@ -141,7 +141,7 @@ class Battle:
     def ai_pick_moves(self, values):
         if not self.p2Ready and 'forceSwitch' not in values.player2.request and 'wait' not in values.player2.request:
             print("Let's take a look")
-            values.player2.ai.select_actions(self, values)
+            values.player2.ai.update(self, values)
 
 
     def back_button(self, values):

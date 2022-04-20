@@ -51,3 +51,5 @@ Major fixes
  left on the bench:
 	|error|[Invalid choice] Incomplete choice: switch Charizard - missing other pokemon
 - Add a "hurt itself in confusion!" message and adjust hp bar
+- Add a message for damage from poison
+- Add a message for status from synchronize

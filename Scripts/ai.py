@@ -104,12 +104,19 @@ class SingleOption:
         self.score = score
         self.target = target
 
+class SpeedComparison:
+    def __init__(self, pkmn, ratio):
+        self.pkmn = pkmn
+        self.ratio = ratio
+
 class AI:
     """
     Holds information gathered from battle and team preview, assumptions made about the opponents team,
     information about the AI team and methods for decision making
     """
     def __init__(self, team):
+        self.state = 0
+
         self.enemyPokemonSeen = []
         self.gatherInfo = True
         self.useDefault = False
@@ -164,15 +171,16 @@ class AI:
         try:
             #If line is an enemy move, see if it is already in the known enemy move list
             if line.split("|")[1] == 'move':
-                if line.split("|")[2][:2] == 'p1':
-                    move = line.split("|")[3].lower().replace(" ", "")
-                    for pkmn in values.battle.p1Active:
-                        if pkmn.nickname == line.split("|")[2][5:].lower():
-                            user = pkmn
+                move = line.split("|")[3].lower().replace(" ", "")
+                player = line.split("|")[2][:2]
+                user = values.pokemon[player][line.split("|")[2][5:].lower()]
+                moveData = MoveData(loaddata.load_moves(move))
+                self.turnOrder.append([user, moveData])
+                if player == 'p1':
                     if move not in user.knownMoves:
                         # If not already listed, load data and add it add it
                         user.knownMoves.append(move)
-                        user.moveData.append(MoveData(loaddata.load_moves(move)))
+                        user.moveData.append(moveData)
                         #If any of the enemy move lists are 4 items long, empty its potential moves list
                         if len(user.moveData) >= 4:
                             user.potentialMoves = []
@@ -390,6 +398,9 @@ class Pallet(AI):
         AI.__init__(self, team)
         self.gatherInfo = False
 
+    def update(self, battle, values):
+        self.select_actions(battle, values)
+
     def team_preview(self, values):
         order = [0, 1, 2, 3, 4, 5]
         random.shuffle(order)
@@ -452,6 +463,9 @@ class NewBark(Pallet):
     def __init__(self, team):
         Pallet.__init__(self, team)
         self.gatherInfo = False
+
+    def update(self, battle, values):
+        self.select_actions(battle, values)
 
     def select_actions(self, battle, values):
 
@@ -520,6 +534,13 @@ class Littleroot(AI):
     def __init__(self, team):
         AI.__init__(self, team)
 
+    def update(self, battle, values):
+        if self.state == 0:
+            self.interpret_info(battle, values)
+            self.state = 1
+        else:
+            self.select_actions(battle, values)
+
     def team_preview(self, values):
 
         #Assign types to pokemon
@@ -557,6 +578,85 @@ class Littleroot(AI):
                               self.team.pokemon[order[2]],
                               self.team.pokemon[order[3]]
                               ]
+
+        #Calculate speed comparisons
+        for pkmn1 in self.team.selected:
+            for pkmn2 in self.team.selected:
+                if pkmn1 is not pkmn2:
+                    ratio = pkmn2.stats['spe']/pkmn1.stats['spe']
+                    pkmn1.fasterThan[pkmn2] = ratio
+                    pkmn1.slowerThan[pkmn2] = ratio
+
+    def interpret_info(self, battle, values):
+
+        #Iterate through priority brackets
+        for i in range(-7, 6):
+            moves = list(filter(lambda x: x[1].priority == i, self.turnOrder))
+            # See if we have more than one move in a bracket
+            if len(moves) > 1:
+                #If so, consider each combination of pkmn, unless they are both ai owned
+                for user1 in moves:
+                    for user2 in moves:
+                       if user1 is not user2 and not (
+                               user1[0] in self.team.selected and user2[0] in self.team.selected
+                       ):
+                           if moves.index(user1) < moves.index(user2):
+                               # If the comparison has not been recorded before, add it
+                               if user2[0] in user1[0].fasterThan:
+                                   # see if this ratio is better
+                                   user1[0].fasterThan[user2[0]] = min(user1[0].fasterThan[user2[0]],
+                                                                     user1[0].speedMult/user2[0].speedMult)
+                               else:
+                                   user1[0].fasterThan[user2[0]] = user1[0].speedMult/user2[0].speedMult
+                           else:
+                               # If the comparison has not been recorded before, add it
+                               if user2[0] in user1[0].slowerThan:
+                                   # see if this ratio is better
+                                   user1[0].slowerThan[user2[0]] = max(user1[0].slowerThan[user2[0]],
+                                                                     user1[0].speedMult / user2[0].speedMult)
+                               else:
+                                   user1[0].slowerThan[user2[0]] = user1[0].speedMult / user2[0].speedMult
+
+        #Iterate through all combinations of 2 pkmn, unless they are both ai owned
+        allPkmn = [values.pokemon['p1'][pkmn] for pkmn in self.enemyPokemonSeen]
+        allPkmn = allPkmn + self.team.selected
+
+        for pkmn1 in allPkmn:
+            for pkmn2 in allPkmn:
+                if pkmn1 is not pkmn2 and not (pkmn1 in self.team.selected and pkmn2 in self.team.selected):
+                    #If pkmn1 is faster than pkmn2, infer that pkmn1 is faster than anything slower than pkmn2
+                    if pkmn2 in pkmn1.fasterThan:
+                        for pkmn3 in pkmn2.fasterThan.keys():
+                            if (pkmn2.fasterThan[pkmn3] < pkmn1.fasterThan[pkmn2] and pkmn3 not in pkmn1.fasterThan
+                                    and pkmn1 is not pkmn3):
+                                pkmn1.fasterThan[pkmn3] = pkmn1.fasterThan[pkmn2]
+                    #If pkmn1 is slower than pkmn2, infer that pkmn1 is slower than anything faster than pkmn2
+                    if pkmn2 in pkmn1.slowerThan:
+                        for pkmn3 in pkmn2.slowerThan.keys():
+                            if (pkmn2.slowerThan[pkmn3] > pkmn1.slowerThan[pkmn2] and pkmn3 not in pkmn1.slowerThan
+                                    and pkmn1 is not pkmn3):
+                                pkmn1.slowerThan[pkmn3] = pkmn1.slowerThan[pkmn2]
+
+
+
+        #Recalculate speed modifiers
+        for pkmn in values.team1.selected + values.team2.selected:
+            if pkmn.statusCondition == 'par':
+                condition = 0.25
+            else:
+                condition = 1
+            if pkmn in values.team1.selected and 'tailwind' in values.player1.side:
+                field = 2
+            elif pkmn in values.team2.selected and 'tailwind' in values.player2.side:
+                field = 2
+            else:
+                field = 1
+            pkmn.speedMult = (
+                                     max(2 + pkmn.statStages['spe'], 2)/max(2 + pkmn.statStages['spe'] * -1, 2)
+                             ) * condition * field
+
+        self.turnOrder = []
+
 
     def select_actions(self, battle, values):
         #Note number of active pokemon
@@ -683,4 +783,5 @@ class Littleroot(AI):
                 self.useDefault = False
 
         battle.p2Ready = True
+        self.state = 0
 
