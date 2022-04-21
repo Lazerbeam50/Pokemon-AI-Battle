@@ -124,12 +124,12 @@ class AI:
         self.turnOrder = []
 
     def compute_checks(self, values, inBattle=False):
-        #Clear out check and counter lists
+        #Clear out threatens and walls lists
         for poke in values.team1.pokemon + values.team2.pokemon:
-            poke.checks = []
-            poke.checkedBy = []
-            poke.counters = []
-            poke.counteredBy = []
+            poke.threatens = []
+            poke.threatenedBy = []
+            poke.walls = []
+            poke.walledBy = []
 
         if inBattle:
             #If we know which 4 pokemon the opponent has brought, only calculate checks for those pokemon
@@ -161,20 +161,20 @@ class AI:
                 # Iterate through all of AI's moves, saving best damage factor
                 bestDamage2 = self.get_best_damage_factor(poke2.moveData, poke2, poke1)
 
-                #Assign check and/or counters
+                #Assign threats and/or walls
                 if bestDamage1 >= 200:
-                    poke1.checks.append(poke2)
-                    poke2.checkedBy.append(poke1)
+                    poke1.threatens.append(poke2)
+                    poke2.threatenedBy.append(poke1)
                 elif bestDamage1 < 100:
-                    poke1.counteredBy.append(poke2)
-                    poke2.counters.append(poke1)
+                    poke1.walledBy.append(poke2)
+                    poke2.walls.append(poke1)
 
                 if bestDamage2 >= 200:
-                    poke2.checks.append(poke1)
-                    poke1.checkedBy.append(poke2)
+                    poke2.threatens.append(poke1)
+                    poke1.threatenedBy.append(poke2)
                 elif bestDamage2 < 100:
-                    poke2.counteredBy.append(poke1)
-                    poke1.counters.append(poke2)
+                    poke2.walledBy.append(poke1)
+                    poke1.walls.append(poke2)
 
     def gather_info(self, values, line):
         print("AI gathering line:", line)
@@ -313,9 +313,9 @@ class AI:
         #Accuracy
         accuracy = moveData.accuracy/100
 
-        #Checks/Counters
+        #Checks
 
-        checks = 1 + (1 * len(target.checks)) + (0.5 * len(target.counters))
+        checks = 1 + (1 * len(target.threatens)) + (0.5 * len(target.walls))
 
         #Buffs
         if moveData.damageClassID == 2:

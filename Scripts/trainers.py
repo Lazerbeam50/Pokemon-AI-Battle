@@ -85,10 +85,10 @@ class Pokemon:
         self.switchTarget = False
         self.request = None
 
-        self.checkedBy = []
-        self.checks = []
-        self.counteredBy = []
-        self.counters = []
+        self.threatenedBy = []
+        self.threatens = []
+        self.walledBy = []
+        self.walls = []
         self.fainted = False
         self.fasterThan = {}
         self.knownAbility = None
