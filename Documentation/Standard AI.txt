@@ -49,6 +49,7 @@ For deciding on switch options:
 	- Else if current pokemon is threatened at all, incentivise switch (3.8)
 	- Else, disincentivise switch (0.9)
 2 - Net buff score (more debuffs encourage a switch, more buffs discourage)
+	= e**((-x)/15) where x = the sum of the stat stages
 3 - Is current poke dead weight?
 	- If current poke is any of the following, incentivise switch (3, else 0.9)
 		- Frozen and has no thaw out moves
