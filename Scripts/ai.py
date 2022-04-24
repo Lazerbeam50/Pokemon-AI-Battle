@@ -98,16 +98,12 @@ class PotentialMove:
         self.damageClassID = damageClassID
 
 class SingleOption:
-    def __init__(self, user, move, score, target):
+    def __init__(self, user, score, target, move=None, slotLocation=None):
         self.user = user
         self.move = move
         self.score = score
         self.target = target
-
-class SpeedComparison:
-    def __init__(self, pkmn, ratio):
-        self.pkmn = pkmn
-        self.ratio = ratio
+        self.slotLocation = slotLocation
 
 class AI:
     """
@@ -120,16 +116,11 @@ class AI:
         self.enemyPokemonSeen = []
         self.gatherInfo = True
         self.useDefault = False
+        self.startGameRecalc = False
         self.team = team
         self.turnOrder = []
 
     def compute_checks(self, values, inBattle=False):
-        #Clear out threatens and walls lists
-        for poke in values.team1.pokemon + values.team2.pokemon:
-            poke.threatens = []
-            poke.threatenedBy = []
-            poke.walls = []
-            poke.walledBy = []
 
         if inBattle:
             #If we know which 4 pokemon the opponent has brought, only calculate checks for those pokemon
@@ -151,6 +142,14 @@ class AI:
         else:
             team1 = values.team1.pokemon
             team2 = self.team.pokemon
+
+        # Clear out threatens and walls lists
+        for poke in values.team1.pokemon + values.team2.pokemon:
+            poke.threatens = []
+            poke.threatenedBy = []
+            poke.walls = []
+            poke.walledBy = []
+
         #Iterate through each combination of player and AI pokemon
         for poke1 in team1:
             for poke2 in team2:
@@ -177,7 +176,6 @@ class AI:
                     poke1.walls.append(poke2)
 
     def gather_info(self, values, line):
-        print("AI gathering line:", line)
         try:
             #If line is an enemy move, see if it is already in the known enemy move list
             if line.split("|")[1] == 'move':
@@ -548,7 +546,10 @@ class Littleroot(AI):
         AI.__init__(self, team)
 
     def update(self, battle, values):
-        if self.state == 0:
+        if not self.startGameRecalc:
+            self.compute_checks(values, inBattle=True)
+            self.startGameRecalc = True
+        elif self.state == 0:
             self.interpret_info(battle, values)
             self.state = 1
         else:
@@ -584,7 +585,7 @@ class Littleroot(AI):
         self.compute_checks(values)
 
         order = [0, 1, 2, 3, 4, 5]
-        random.shuffle(order)
+        #random.shuffle(order)
 
         self.team.selected = [self.team.pokemon[order[0]],
                               self.team.pokemon[order[1]],
@@ -676,6 +677,10 @@ class Littleroot(AI):
         numberActive = 0
         #Iterate through active pokemon
         singleOptions = [[],[]]
+
+        #Set up list of pokemon to switch to
+        switchOptions = [option for option in battle.p2Side if option.request['condition'] != '0 fnt']
+
         for i in range(len(battle.p2Active)):
             try:
                 #Iterate through moves
@@ -721,9 +726,20 @@ class Littleroot(AI):
                         if move['target'] in ('any', 'normal'):
                             score2 = 100
 
-                    singleOptions[i].append(SingleOption(battle.p2Active[i], move, max(score1, 0), 0))
+                    singleOptions[i].append(SingleOption(battle.p2Active[i], max(score1, 0), 0, move=move))
                     if score2 is not None:
-                        singleOptions[i].append(SingleOption(battle.p2Active[i], move, max(score2, 0), 1))
+                        singleOptions[i].append(SingleOption(battle.p2Active[i], max(score2, 0), 1, move=move))
+
+                #Consider switch options
+                if switchOptions:
+                    userSwitchScore = self.regular_switch_user(battle.p2Active[i], battle, values)
+
+                for option in switchOptions:
+                    targetSwitchScore = self.regular_switch_target(option, battle, values)
+
+                    score1 = 80 * userSwitchScore * targetSwitchScore
+                    singleOptions[i].append(SingleOption(battle.p2Active[i], max(score1, 0), 0,
+                                                         slotLocation=option.slotLocation))
 
                 numberActive += 1
 
@@ -739,7 +755,10 @@ class Littleroot(AI):
         if numberActive == 2:
             for option1 in singleOptions[0]:
                 for option2 in singleOptions[1]:
-                    combinedOptions.append(CombinedOption(option1, option2))
+                    #Prevent considering switching to the same pokemon
+                    if not (option1.slotLocation is not None and option2.slotLocation is not None
+                            and option1.slotLocation is option2.slotLocation):
+                        combinedOptions.append(CombinedOption(option1, option2))
         else:
             if not singleOptions[0]:
                 i = 1
@@ -761,31 +780,37 @@ class Littleroot(AI):
             for option in options:
                 try:
                     target = None
-                    if 'target' in option.move:
-                        if option.move['target'] in ['normal', 'any']:
-                            try:
-                                target = battle.p1Active[option.target]
-                            except IndexError:
-                                print("Let's look!")
+                    if option.move is not None:
+                        if 'target' in option.move:
+                            if option.move['target'] in ['normal', 'any']:
+                                try:
+                                    target = battle.p1Active[option.target]
+                                except IndexError:
+                                    print("Let's look!")
+                            elif option.move['target'] == 'adjacentAlly':
+                                target = -3 - option.user.allyLocation
+                        if target is None:
+                            values.player2.choices.append([option.user.nickname,
+                                                           option.move['move'],
+                                                           option.move['id']
+                                                           ])
                         elif option.move['target'] == 'adjacentAlly':
-                            target = -3 - option.user.allyLocation
-                    if target is None:
-                        values.player2.choices.append([option.user.nickname,
-                                                       option.move['move'],
-                                                       option.move['id']
-                                                       ])
-                    elif option.move['target'] == 'adjacentAlly':
-                        values.player2.choices.append([option.user.nickname,
-                                                       option.move['move'],
-                                                       option.move['id'],
-                                                       target,
-                                                       "Placeholder"])
+                            values.player2.choices.append([option.user.nickname,
+                                                           option.move['move'],
+                                                           option.move['id'],
+                                                           target,
+                                                           "Placeholder"])
+                        else:
+                            values.player2.choices.append([option.user.nickname,
+                                                           option.move['move'],
+                                                           option.move['id'],
+                                                           target.enemyLocation,
+                                                           target.nickname])
                     else:
-                        values.player2.choices.append([option.user.nickname,
-                                                       option.move['move'],
-                                                       option.move['id'],
-                                                       target.enemyLocation,
-                                                       target.nickname])
+                        values.player2.choices.append([
+                            option.user.nickname,
+                            option.slotLocation
+                        ])
 
                 except AttributeError:
                     pass
@@ -798,3 +823,88 @@ class Littleroot(AI):
         battle.p2Ready = True
         self.state = 0
 
+
+    def regular_switch_user(self, current, battle, values):
+        
+        #Compare speeds
+        #If current pkmn has only one threat which it is faster than and checks back, disincentivise switch
+        activeThreats = [pkmn for pkmn in current.threatenedBy if pkmn in battle.p1Active]
+        if len(activeThreats) == 1:
+            if current in activeThreats[0].threatenedBy and current in activeThreats[0].slowerThan:
+                if current.speedMult >= activeThreats[0].slowerThan[current]:
+                    speedFactor = 0.9
+                # Elif current pkmn is threatened at all, incentivise switch
+                else:
+                    speedFactor = 3.8
+            else:
+                speedFactor = 3.8
+        elif len(activeThreats) > 1:
+            speedFactor = 3.8
+        # Else, disincentivise switch
+        else:
+            speedFactor = 0.9
+
+        #Calculate net buff score
+        sumOfBuffs = sum(current.statStages.values())
+        netBuffFactor = math.e**((-1 * sumOfBuffs)/15)
+
+        #Consider if current pkmn is dead weight
+        #If pkmn is frozen and has no thaw out moves
+        if current.statusCondition == 'frz' and len(
+                {'flamewheel', 'flareblitz', 'sacredfire'} - set(current.request['moves'])
+        ) == 3:
+            deadWeightFactor = 3
+        #Elif pkmn is asleep without snore, sleep talk or rest
+        elif current.statusCondition == 'slp' and len(
+                {'snore', 'sleeptalk', 'rest'} - set(current.request['moves'])
+        ) == 3:
+            deadWeightFactor = 3
+        #Elif pkmn is walled by both enemy pkmn
+        elif len(battle.p1Active) == 2:
+            if battle.p1Active[0] in current.walledBy and battle.p1Active[1] in current.walledBy:
+                deadWeightFactor = 3
+            else:
+                deadWeightFactor = 0.9
+        #Else, disincentivise switch
+        else:
+            deadWeightFactor = 0.9
+
+        return speedFactor * netBuffFactor * deadWeightFactor
+
+    def regular_switch_target(self, target, battle, values):
+
+        #Switch target is not threatened or walled
+        if battle.p1Active[0] not in target.threatenedBy and battle.p1Active[0] not in target.walledBy:
+            if len(battle.p1Active) == 2:
+                if battle.p1Active[1] not in target.threatenedBy and battle.p1Active[1] not in target.walledBy:
+                    safeFactor = 1.25
+                else:
+                    safeFactor = 0.5
+            else:
+                safeFactor = 1.25
+        else:
+            safeFactor = 0.5
+        #Switch target walls at least one opponent and is not threatened by the other
+        if len(battle.p1Active) == 2:
+            if (
+                    (battle.p1Active[0] in target.walls and not battle.p1Active[1] in target.threatenedBy) or
+                    (battle.p1Active[1] in target.walls and not battle.p1Active[0] in target.threatenedBy)
+            ):
+                counterFactor = 1.5
+            else:
+                counterFactor = 0.9
+        elif battle.p1Active[0] in target.walls:
+            counterFactor = 1.5
+        else:
+            counterFactor = 0.9
+
+        #Defensive stat score for target
+        currentHP = int(target.request['condition'].split("/")[0])
+        maxHP = int(target.request['condition'].split("/")[1])
+        defensiveStatTotal = maxHP + target.request['stats']['def'] + target.request['stats']['spd']
+        defensiveStatFactor = (math.e**((defensiveStatTotal - 403)/150)) * (currentHP/maxHP)
+
+        #Switch target ability bonus
+        #Target has intimidate and at least one opponent is physical
+
+        return safeFactor * counterFactor * defensiveStatFactor

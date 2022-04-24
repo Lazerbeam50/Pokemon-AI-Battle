@@ -53,3 +53,4 @@ Major fixes
 - Add a "hurt itself in confusion!" message and adjust hp bar
 - Add a message for damage from poison
 - Add a message for status from synchronize
+- Fix bug where output doc isn't cleared upon game close

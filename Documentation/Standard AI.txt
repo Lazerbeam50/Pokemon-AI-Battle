@@ -56,13 +56,15 @@ For deciding on switch options:
 		- Asleep without Snore, Sleep Talk or Rest
 		- Walled by both enemy pokes
 
-4 - Switch target is not threatened or walled (1.25, else 0.9)
+4 - Switch target is not threatened or walled (1.25, else 0.5)
 5 - Switch target walls at least one opponent and is not threatened by the other (1.5, else 0.9)
 6 - Average defensive stats for switch target (bulker switch ins are safer pivots)
+	= (e**((x - 403)/150)) * (currentHP/maxHP) where x = sum of max hp, def and spd
 7 - Switch target ability bonus
-	- e.g. Target has Intimidate and opponents are physical
+	- e.g. Target has Intimidate and opponents are physical (1.5)
 	- Air Lock, Cloud Nine, Damp, Drizzle, Drought, Flower Gift, Intimidate, Lightningrod, 
 	Sand Stream, Snow Warning, Storm Drain, and Trace
+	- Else, 1
 
 Factors are then multiplied by 80.
 
