@@ -1,0 +1,20 @@
+Protect
+=======
+
+Consider:
+	- Enemy Fake Out if user is focus sashed
+	- Avoid a double up
+	- Scout if no opponent moves are known
+	- Continuous use
+	- Stalling weather or trick room
+
+Double up factor
+	- If both opponents threaten the user: 2.5, else 0.9
+
+Scout factor
+	- If no moves are known for either opponent: 1.2, else 0.9
+
+Continuous use factor
+	- 1 * (0.5)**(count of previous consecutive uses of protect)
+
+Return 100 * doubleUpFactor * scoutFactor * continousUseFactor

@@ -2,6 +2,7 @@
 Hold AI classes and all methods/functions for decision making
 """
 
+import copy
 import math
 import random
 
@@ -118,6 +119,7 @@ class AI:
         self.useDefault = False
         self.startGameRecalc = False
         self.team = team
+        self.turnHistory = []
         self.turnOrder = []
 
     def compute_checks(self, values, inBattle=False):
@@ -544,6 +546,7 @@ class Littleroot(AI):
 
     def __init__(self, team):
         AI.__init__(self, team)
+        self.moveMethods = {'detect': self.protect, 'protect': self.protect}
 
     def update(self, battle, values):
         if not self.startGameRecalc:
@@ -585,7 +588,7 @@ class Littleroot(AI):
         self.compute_checks(values)
 
         order = [0, 1, 2, 3, 4, 5]
-        #random.shuffle(order)
+        random.shuffle(order)
 
         self.team.selected = [self.team.pokemon[order[0]],
                               self.team.pokemon[order[1]],
@@ -669,6 +672,7 @@ class Littleroot(AI):
                                      max(2 + pkmn.statStages['spe'], 2)/max(2 + pkmn.statStages['spe'] * -1, 2)
                              ) * condition * field
 
+        self.turnHistory.append(self.turnOrder)
         self.turnOrder = []
 
 
@@ -695,8 +699,16 @@ class Littleroot(AI):
                     score1 = 0
                     score2 = None
                     moveData = [m for m in battle.p2Active[i].moveData if move['id'] == m.identifier][0]
+                    #See if we have a custom function for this move
+                    try:
+                        score1, score2 = self.moveMethods[moveData.identifier](battle, values, battle.p2Active[i],
+                                                                               move, moveData)
+                        customMove = True
+                    except KeyError:
+                        customMove = False
                     #If move is damaging and hits all opponents
-                    if moveData.damageClassID in range(2, 4) and move['target'] in ('all', 'allAdjacent'):
+                    if (moveData.damageClassID in range(2, 4) and move['target'] in ('all', 'allAdjacent')
+                            and not customMove):
                         for foe in battle.p1Active:
                             score1 += self.get_standard_damage_score(battle, values, battle.p2Active[i], move, moveData,
                                                                     foe)
@@ -707,12 +719,14 @@ class Littleroot(AI):
                                 j = 0
                             score1 -= self.get_standard_damage_score(battle, values, battle.p2Active[i], move, moveData,
                                                                     battle.p2Active[j]) * 1.5
-                    elif moveData.damageClassID in range(2, 4) and move['target'] == 'allAdjacentFoes':
+                    elif (moveData.damageClassID in range(2, 4) and move['target'] == 'allAdjacentFoes'
+                          and not customMove):
                         for foe in battle.p1Active:
                             score1 += self.get_standard_damage_score(battle, values, battle.p2Active[i], move, moveData,
                                                                     foe)
 
-                    elif moveData.damageClassID in range(2, 4) and move['target'] in ('any', 'normal'):
+                    elif (moveData.damageClassID in range(2, 4) and move['target'] in ('any', 'normal')
+                          and not customMove):
                         try:
                             score1 = self.get_standard_damage_score(battle, values, battle.p2Active[i], move, moveData,
                                                                     battle.p1Active[0])
@@ -908,3 +922,48 @@ class Littleroot(AI):
         #Target has intimidate and at least one opponent is physical
 
         return safeFactor * counterFactor * defensiveStatFactor
+
+    def protect(self, battle, values, user, move, moveData):
+
+        #Double up factor
+        if len(battle.p1Active) == 2:
+            if user in battle.p1Active[0].threatens and user in battle.p1Active[1].threatens:
+                doubleUpFactor = 2.5
+            else:
+                doubleUpFactor = 0.9
+        else:
+            doubleUpFactor = 0.9
+
+        #Scout factor
+        if len(battle.p1Active) == 2:
+            if not battle.p1Active[0].knownMoves and not battle.p1Active[1].knownMoves:
+                scoutFactor = 1.2
+            else:
+                scoutFactor = 0.9
+        else:
+            scoutFactor = 0.9
+
+        #Continuous use factor
+        previousUses = 0
+        try:
+            turnHistory = copy.copy(self.turnHistory)
+            turnHistory.reverse()
+            for turn in turnHistory:
+                foundUser = False
+                for action in turn:
+                    if action[0] is user and action[1].identifier in ['detect', 'protect']:
+                        previousUses += 1
+                        foundUser = True
+                    elif action[0] is user:
+                        break
+                if not foundUser:
+                    break
+        except TypeError:
+            pass
+
+        continiousUseFactor = (0.5)**previousUses
+
+        score1 = 100 * doubleUpFactor * scoutFactor * continiousUseFactor
+        score2 = None
+
+        return score1, score2
