@@ -1,5 +1,67 @@
-Protect
-=======
+Sunny Day
+=========
+Consider:
+	- Is it already sunny?
+	- Does any pkmn on the field have Cloud Nine or Air Lock?
+	- Is the user holding a heat rock?
+	- Does the user's team benefit from it?
+		- Do we use fire moves?
+		- Do we not use water moves?
+		- Do we use Solar Beam, Weather Ball, Moonlight, Synthesis or Morning Sun?
+		- Do we have an ally with Forecast, Chlorophyll, Flower Gift, Leaf Guard or Solar
+		Power?
+		- Do we have an ally with Dry Skin?
+		- Do we have an ally with Thunder?
+	- Does the opponent's team benefit from it?
+		- Have they used fire moves?
+		- Have they used water moves?
+		- Have they used Solar Beam, Weather Ball, Moonlight, Synthesis or Morning Sun?
+		- Do they have a pkmn with Forecast, Chlorophyll, Flower Gift, Leaf Guard or Solar
+		Power?
+		- Do they have an pkmn with Dry Skin?
+		- Do they have an pkmn with Thunder?
+
+Already sunny factor:
+	- If already harsh sunlight (0, else 1)
+
+Weather block factor:
+	- If any active pkmn have the known ability Cloud Nine or Air Lock (0.1, else 1)
+		
+Heat rock factor:
+	- If user is holding a heat rock (1.6, else 1)
+
+Ally team factor:
+	Product of:
+		- If any ally has a fire type damaging move (1.1, else 1)
+		- If any ally has a water type damaging move (0.9, else 1)
+		- If any ally has Solar beam (1.1, else 1)
+		- If any ally has Moonlight (1.1, else 1)
+		- If any ally has Weather Ball (1.1, else 1)
+		- If any ally has Thunder (0.9, else 1)
+		- If any ally has the ability Forecast (1.1, else 1)
+		- If any ally has the ability Chlorophyll (1.1, else 1)
+		- If any ally has the ability Flower Gift (1.1, else 1)
+		- If any ally has the ability Leaf Guard (1.1, else 1)
+		- If any ally has the ability Solar Power (1.1, else 1)
+		- If any ally has the ability Dry Skin (0.9, else 1)
+		
+Enemy team factor:
+	Product of:
+		- If any enemy has a fire type damaging move (0.8, else 1)
+		- If any enemy has a water type damaging move (1.1, else 1)
+		- If any enemy has Solar beam (0.8, else 1)
+		- If any enemy has Moonlight (0.8, else 1)
+		- If any enemy has Weather ball (0.8, else 1)
+		- If any enemy has Thunder (1.1, else 1)
+		- If any enemy has the ability Forecast (0.8, else 1)
+		- If any enemy has the ability Chlorophyll (0.8, else 1)
+		- If any enemy has the ability Flower Gift (0.8, else 1)
+		- If any enemy has the ability Leaf Guard (0.8, else 1)
+		- If any enemy has the ability Solar Power (0.8, else 1)
+		- If any enemy has the ability Dry Skin (1.1, else 1)
+
+Protect/Detect
+==============
 
 Consider:
 	- Enemy Fake Out if user is focus sashed

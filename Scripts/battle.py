@@ -712,6 +712,7 @@ class Battle:
                 elif line[2] == 'none\n':
                     if self.weather == 0:
                         text = "The harsh sunlight faded."
+                        self.weather = None
 
             elif line[1] == '-miss':
                 pkmn = line[3][5:]

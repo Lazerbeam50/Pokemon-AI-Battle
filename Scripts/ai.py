@@ -546,7 +546,7 @@ class Littleroot(AI):
 
     def __init__(self, team):
         AI.__init__(self, team)
-        self.moveMethods = {'detect': self.protect, 'protect': self.protect}
+        self.moveMethods = {'detect': self.protect, 'protect': self.protect, 'sunnyday': self.sunny_day}
 
     def update(self, battle, values):
         if not self.startGameRecalc:
@@ -735,7 +735,7 @@ class Littleroot(AI):
                         except IndexError:
                             pass
 
-                    else:
+                    elif not customMove:
                         score1 = 100
                         if move['target'] in ('any', 'normal'):
                             score2 = 100
@@ -914,7 +914,11 @@ class Littleroot(AI):
 
         #Defensive stat score for target
         currentHP = int(target.request['condition'].split("/")[0])
-        maxHP = int(target.request['condition'].split("/")[1])
+        try:
+            maxHP = int(target.request['condition'].split("/")[1])
+        except ValueError:
+            #Sometimes condition can appear as something like '155 par', which crashes the game
+            maxHP = int(target.request['condition'].split("/")[1].split(" ")[0])
         defensiveStatTotal = maxHP + target.request['stats']['def'] + target.request['stats']['spd']
         defensiveStatFactor = (math.e**((defensiveStatTotal - 403)/150)) * (currentHP/maxHP)
 
@@ -922,6 +926,142 @@ class Littleroot(AI):
         #Target has intimidate and at least one opponent is physical
 
         return safeFactor * counterFactor * defensiveStatFactor
+
+    def sunny_day(self, battle, values, user, move, moveData):
+
+        #Is it already sunny?
+        if battle.weather == 0:
+            alreadySunnyFactor = 0
+        else:
+            alreadySunnyFactor = 1
+
+        #Does any pkmn on the field have Cloud Nine or Air Lock?
+        weatherBlockFactor = 1
+        for pkmn in battle.p1Active + battle.p2Active:
+            if pkmn.knownAbility in ('airlock', 'cloudnine'):
+                weatherBlockFactor = 0.1
+                break
+
+        #Is the user holding a heat rock?
+        if user.item == 'heatrock':
+            heatRockFactor = 1.6
+        else:
+            heatRockFactor = 1
+
+        #Does the user's team benefit from it?
+        fireMove = False
+        waterMove = False
+        solarbeam = False
+        moonlight = False
+        weatherball = False
+        thunder = False
+        forecast = False
+        chlorophyll = False
+        flowergift = False
+        leafguard = False
+        solarpower = False
+        dryskin = False
+
+        for pkmn in self.team.selected:
+            if pkmn.request['condition'] != '0 fnt':
+                forecast = (pkmn.knownAbility == 'forecast' or forecast)
+                chlorophyll = (pkmn.knownAbility == 'chlorophyll' or chlorophyll)
+                flowergift = (pkmn.knownAbility == 'flowergift' or flowergift)
+                leafguard = (pkmn.knownAbility == 'leafguard' or leafguard)
+                solarpower = (pkmn.knownAbility == 'solarpower' or solarpower)
+                dryskin = (pkmn.knownAbility == 'dryskin' or dryskin)
+
+                for move in pkmn.moveData:
+                    if move.damageClassID in (2, 3) and move.typeID == 10:
+                        fireMove = True
+                    elif move.damageClassID in (2, 3) and move.typeID == 11:
+                        waterMove = True
+                    else:
+                        solarbeam = (move.identifier == 'solarbeam' or solarbeam)
+                        moonlight = (move.identifier == 'moonlight' or moonlight)
+                        moonlight = (move.identifier == 'synthesis' or moonlight)
+                        moonlight = (move.identifier == 'morningsun' or moonlight)
+                        weatherball = (move.identifier == 'weatherball' or weatherball)
+                        thunder = (move.identifier == 'thunder' or thunder)
+
+
+        allyTeamFactor = (
+            max(int(fireMove) * 1.1, 1)
+            * max(int(not waterMove), 0.9)
+            * max(int(solarbeam) * 1.1, 1)
+            * max(int(moonlight) * 1.1, 1)
+            * max(int(weatherball) * 1.1, 1)
+            * max(int(not thunder), 0.9)
+            * max(int(forecast) * 1.1, 1)
+            * max(int(chlorophyll) * 1.1, 1)
+            * max(int(flowergift) * 1.1, 1)
+            * max(int(leafguard) * 1.1, 1)
+            * max(int(solarpower) * 1.1, 1)
+            * max(int(not dryskin), 0.9)
+        )
+
+        #Does the opponent's team benefit from it?
+        fireMove = False
+        waterMove = False
+        solarbeam = False
+        moonlight = False
+        weatherball = False
+        thunder = False
+        forecast = False
+        chlorophyll = False
+        flowergift = False
+        leafguard = False
+        solarpower = False
+        dryskin = False
+
+        team1 = []
+        for pkmn in values.team1.pokemon:
+            if pkmn.nickname in self.enemyPokemonSeen and pkmn.request is not None:
+                if pkmn.request['condition'] != '0 fnt':
+                    team1.append(pkmn)
+        for pkmn in team1:
+            forecast = (pkmn.knownAbility == 'forecast' or forecast)
+            chlorophyll = (pkmn.knownAbility == 'chlorophyll' or chlorophyll)
+            flowergift = (pkmn.knownAbility == 'flowergift' or flowergift)
+            leafguard = (pkmn.knownAbility == 'leafguard' or leafguard)
+            solarpower = (pkmn.knownAbility == 'solarpower' or solarpower)
+            dryskin = (pkmn.knownAbility == 'dryskin' or dryskin)
+
+            moves = [MoveData(loaddata.load_moves(move)) for move in pkmn.knownMoves]
+
+            for move in moves + pkmn.potentialMoves:
+                if move.damageClassID in (2, 3) and move.typeID == 10:
+                    fireMove = True
+                elif move.damageClassID in (2, 3) and move.typeID == 11:
+                    waterMove = True
+                else:
+                    solarbeam = (move.identifier == 'solarbeam' or solarbeam)
+                    moonlight = (move.identifier == 'moonlight' or moonlight)
+                    moonlight = (move.identifier == 'synthesis' or moonlight)
+                    moonlight = (move.identifier == 'morningsun' or moonlight)
+                    weatherball = (move.identifier == 'weatherball' or weatherball)
+                    thunder = (move.identifier == 'thunder' or thunder)
+
+        enemyTeamFactor = (
+                max(int(fireMove) * 0.8, 1)
+                * max(int(not waterMove), 1.1)
+                * max(int(solarbeam) * 0.8, 1)
+                * max(int(moonlight) * 0.8, 1)
+                * max(int(weatherball) * 0.8, 1)
+                * max(int(not thunder), 1.1)
+                * max(int(forecast) * 0.8, 1)
+                * max(int(chlorophyll) * 0.8, 1)
+                * max(int(flowergift) * 0.8, 1)
+                * max(int(leafguard) * 0.8, 1)
+                * max(int(solarpower) * 0.8, 1)
+                * max(int(not dryskin), 1.1)
+        )
+
+
+        score1 = 100 * alreadySunnyFactor * weatherBlockFactor * heatRockFactor * allyTeamFactor * enemyTeamFactor
+        score2 = None
+
+        return score1, score2
 
     def protect(self, battle, values, user, move, moveData):
 
