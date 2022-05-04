@@ -4,7 +4,7 @@ Level: 50
 EVs: 252 SpA / 4 SpD / 252 Spe  
 Timid Nature  
 IVs: 0 Atk  
-- Synthesis  
+- Sunny Day  
 - Protect  
 - Solar Beam  
 - Sludge Bomb  
