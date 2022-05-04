@@ -21,6 +21,20 @@ Note: Non-targeting moves are considered only once. Ally-target is not considere
 Score features
 --------------
 
+Weather
+
+	By default, 1
+
+	In harsh sunlight:
+		- 1.5 if the attack is fire type
+		- 0.5 if the attack is water type
+		- 1.5 if the attack is Solar Beam
+		- 1.25 if the attack is Weather ball
+		- 0.72 if the attack is Thunder
+	Else:
+		- 0.25 if the attack is Solar Beam
+		
+
 Check
 	- 1 + (1 * count of pokemon threatened) + (0.5 * count of pokemon walled)
 

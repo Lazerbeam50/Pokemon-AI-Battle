@@ -54,3 +54,5 @@ Major fixes
 - Add a message for damage from poison
 - Add a message for status from synchronize
 - Fix bug where output doc isn't cleared upon game close
+- Fix bug where pkmn with status conditions do not have their conditions displayed when
+switching back in

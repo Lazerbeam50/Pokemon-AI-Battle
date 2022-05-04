@@ -304,6 +304,25 @@ class AI:
         else:
             stab = 1
 
+        #Weather
+
+        weather = 1
+
+        if battle.weather == 0:
+            if moveData.typeID == 10:
+                weather = 1.5
+            elif moveData.typeID == 11:
+                weather = 0.5
+            elif moveData.identifier == 'solarbeam':
+                weather = 1.5
+            elif moveData.identifier == 'weatherball':
+                weather = 1.25
+            elif moveData.identifier == 'thunder':
+                weather = 0.72
+        else:
+            if moveData.identifier == 'solarbeam':
+                weather = 0.25
+
         #Spread
         if move["target"] in ('all', 'allAdjacent', 'allAdjacentFoes'):
             spread = 0.75
@@ -349,7 +368,7 @@ class AI:
         else:
             status = 1
 
-        score = typeMatchup * stab * spread * accuracy * checks * buffs * status
+        score = typeMatchup * stab * weather * spread * accuracy * checks * buffs * status
 
         return int(score)
 
