@@ -1005,17 +1005,17 @@ class Littleroot(AI):
 
 
         allyTeamFactor = (
-            max(int(fireMove) * 1.1, 1)
+            max(int(fireMove) * 1.3, 1)
             * max(int(not waterMove), 0.9)
-            * max(int(solarbeam) * 1.1, 1)
-            * max(int(moonlight) * 1.1, 1)
-            * max(int(weatherball) * 1.1, 1)
+            * max(int(solarbeam) * 1.3, 1)
+            * max(int(moonlight) * 1.3, 1)
+            * max(int(weatherball) * 1.3, 1)
             * max(int(not thunder), 0.9)
-            * max(int(forecast) * 1.1, 1)
-            * max(int(chlorophyll) * 1.1, 1)
-            * max(int(flowergift) * 1.1, 1)
-            * max(int(leafguard) * 1.1, 1)
-            * max(int(solarpower) * 1.1, 1)
+            * max(int(forecast) * 1.3, 1)
+            * max(int(chlorophyll) * 1.3, 1)
+            * max(int(flowergift) * 1.3, 1)
+            * max(int(leafguard) * 1.3, 1)
+            * max(int(solarpower) * 1.3, 1)
             * max(int(not dryskin), 0.9)
         )
 

@@ -32,17 +32,17 @@ Heat rock factor:
 
 Ally team factor:
 	Product of:
-		- If any ally has a fire type damaging move (1.1, else 1)
+		- If any ally has a fire type damaging move (1.3, else 1)
 		- If any ally has a water type damaging move (0.9, else 1)
-		- If any ally has Solar beam (1.1, else 1)
-		- If any ally has Moonlight (1.1, else 1)
-		- If any ally has Weather Ball (1.1, else 1)
+		- If any ally has Solar beam (1.3, else 1)
+		- If any ally has Moonlight (1.3, else 1)
+		- If any ally has Weather Ball (1.3, else 1)
 		- If any ally has Thunder (0.9, else 1)
-		- If any ally has the ability Forecast (1.1, else 1)
-		- If any ally has the ability Chlorophyll (1.1, else 1)
-		- If any ally has the ability Flower Gift (1.1, else 1)
-		- If any ally has the ability Leaf Guard (1.1, else 1)
-		- If any ally has the ability Solar Power (1.1, else 1)
+		- If any ally has the ability Forecast (1.3, else 1)
+		- If any ally has the ability Chlorophyll (1.3, else 1)
+		- If any ally has the ability Flower Gift (1.3, else 1)
+		- If any ally has the ability Leaf Guard (1.3, else 1)
+		- If any ally has the ability Solar Power (1.3, else 1)
 		- If any ally has the ability Dry Skin (0.9, else 1)
 		
 Enemy team factor:
