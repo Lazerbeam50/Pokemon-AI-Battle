@@ -1,3 +1,22 @@
+Light Screen
+============
+Consider:
+	- Is light screen already up?
+	- Do the opponents use special moves?
+	- Do the opponents have brick break?
+
+Screen already up factor:
+	- 0 if Light Screen is already up, else 1
+
+Special moves factor:
+	- 1.5 * Count of opponents with a special move
+		- To a minimum of 0.1
+
+Brick break factor:
+	- 0.25 if at least one opponent has brick break
+
+Return 100 * ScreenAlreadyUpFactor * SpecialMovesFactor * BrickBreakFactor
+
 Sunny Day
 =========
 Consider:

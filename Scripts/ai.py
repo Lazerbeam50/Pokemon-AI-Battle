@@ -565,7 +565,8 @@ class Littleroot(AI):
 
     def __init__(self, team):
         AI.__init__(self, team)
-        self.moveMethods = {'detect': self.protect, 'protect': self.protect, 'sunnyday': self.sunny_day}
+        self.moveMethods = {'detect': self.protect, 'lightscreen': self.light_screen, 'protect': self.protect,
+                            'sunnyday': self.sunny_day}
 
     def update(self, battle, values):
         if not self.startGameRecalc:
@@ -945,6 +946,46 @@ class Littleroot(AI):
         #Target has intimidate and at least one opponent is physical
 
         return safeFactor * counterFactor * defensiveStatFactor
+
+    def light_screen(self, battle, values, user, move, moveData):
+
+        #Is light screen already up?
+        if "lightscreen" in values.player2.side:
+            screenAlreadyUpFactor = 0
+        else:
+            screenAlreadyUpFactor = 1
+
+        #Do the opponents use special moves?
+        countOfSpecialOpponents = 0
+        brickBreak = False
+        team1 = []
+        for pkmn in values.team1.pokemon:
+            if pkmn.nickname in self.enemyPokemonSeen and pkmn.request is not None:
+                if pkmn.request['condition'] != '0 fnt':
+                    team1.append(pkmn)
+
+        for pkmn in team1:
+            moves = [MoveData(loaddata.load_moves(move)) for move in pkmn.knownMoves]
+
+            for move in moves + pkmn.potentialMoves:
+                if move.identifier == 'brickbreak':
+                    brickBreak = True
+                if move.damageClassID == 3:
+                    countOfSpecialOpponents += 1
+                    break
+
+        specialMovesFactor = max(1.5 * countOfSpecialOpponents, 0.1)
+
+        #Do the opponents have brick break?
+        if brickBreak:
+            brickBreakFactor = 0.25
+        else:
+            brickBreakFactor = 1
+
+        score1 = 100 * screenAlreadyUpFactor * specialMovesFactor * brickBreakFactor
+        score2 = None
+
+        return score1, score2
 
     def sunny_day(self, battle, values, user, move, moveData):
 
