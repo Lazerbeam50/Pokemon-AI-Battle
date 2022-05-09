@@ -56,3 +56,4 @@ Major fixes
 - Fix bug where output doc isn't cleared upon game close
 - Fix bug where pkmn with status conditions do not have their conditions displayed when
 switching back in
+- Add a message for when supereffective damage is reduced by a berry

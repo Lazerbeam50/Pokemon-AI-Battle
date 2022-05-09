@@ -8,6 +8,6 @@ pokeID,teamID,nickname,species,gender,item,ability,hpEV,atkEV,defEV,spaEV,spdEV,
 6,0,,venusaur,m,lifeorb,overgrow,,,,252,4,252,,0,,,,,timid,sunnyday,protect,solarbeam,sludgebomb
 7,0,,charizard,m,expertbelt,blaze,,,,252,4,252,,2,,30,,,timid,airslash,heatwave,hiddenpower,protect
 8,0,,espeon,m,focussash,synchronize,252,,,4,,252,,0,,,,,timid,protect,sunnyday,psychic,lightscreen
-9,0,,snorlax,m,chopleberry,immunity,252,252,,,4,,,,,,,,adamant,earthquake,protect,superpower,doubleedge
+9,0,,snorlax,m,chopleberry,thickfat,252,252,,,4,,,,,,,,adamant,earthquake,protect,superpower,doubleedge
 10,0,,arcanine,m,sitrusberry,intimidate,252,,4,,,252,,,,,,,careful,sunnyday,extremespeed,willowisp,crunch
 11,0,,suicune,,leftovers,pressure,252,,,252,4,,,0,,,,,modest,tailwind,icebeam,protect,signalbeam
