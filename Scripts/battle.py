@@ -481,7 +481,7 @@ class Battle:
         text = {'error': 99, 'switch': 2, '-ability': 3, '-unboost': 4, 'turn': 5, 'move': 10, '-activate': 11,
                 '-damage': 12, '-resisted': 11, '-supereffective': 11, '-enditem': 13, '-heal': 12, '-weather': 11,
                 '-miss': 11, 'cant': 11, 'faint':14, '-sidestart': 11, '-status': 15, '-start': 15, '-fail': 11,
-                '-notarget': 11, '-immune': 11, '-sideend': 11, '-crit': 11, '-boost': 9, '-anim': 10}
+                '-notarget': 11, '-immune': 11, '-sideend': 11, '-crit': 11, '-boost': 9, '-anim': 10, '-enditem': 11}
 
         #Iterate through events queue
         for line in self.simEvents[:]:
@@ -783,6 +783,22 @@ class Battle:
 
             elif line[1] == '-crit':
                 text = "A critical hit!"
+
+            elif line[1] == '-enditem':
+                try:
+                    if line[4] == '[weaken]\n':
+                        if line[2][:2] == 'p1':
+                            user = ""
+                            user2 = ""
+                        else:
+                            user = "The opposing "
+                            user2 = "the opposing "
+                        text = f"""{user}{line[2][5:]} ate its {line[3]}! The {line[3]} weakened the damage to {user2}{line[2][5:]}"""
+                    else:
+                        text = ""
+
+                except IndexError:
+                    pass
 
             if move == 'Protect\n':
                 text = f'{pkmn.upper()} protected itself!'
